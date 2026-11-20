@@ -1,0 +1,6 @@
+Django>=4.2.0,<5.0.0
+google-genai>=1.47.0
+pillow>=11.0.0
+razorpay>=2.0.1
+requests>=2.32.0
+pydantic>=2.0.0
