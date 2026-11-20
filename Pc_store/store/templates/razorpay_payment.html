@@ -1,0 +1,327 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}Pay with Razorpay | NEXORIG{% endblock title %}
+
+{% block extra_css %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<style>
+    .payment-modal-box {
+        max-width: 640px;
+        margin: 40px auto 70px auto;
+        background: #141724;
+        border: 1px solid rgba(0, 210, 255, 0.3);
+        border-radius: 20px;
+        padding: 35px 28px;
+        text-align: center;
+        box-shadow: 0 0 35px rgba(0, 210, 255, 0.15);
+    }
+    .payment-icon-glow {
+        width: 70px;
+        height: 70px;
+        background: rgba(0, 210, 255, 0.15);
+        border: 2px solid #00d2ff;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin-bottom: 16px;
+        box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+    }
+    .payment-title {
+        color: #ffffff;
+        font-size: 1.6rem;
+        font-weight: 800;
+        margin-bottom: 6px;
+    }
+    .payment-subtitle {
+        color: #94a3b8;
+        font-size: 0.92rem;
+        margin-bottom: 22px;
+    }
+    .payment-summary-card {
+        background: #10121a;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 18px;
+        margin-bottom: 20px;
+        text-align: left;
+    }
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        font-size: 0.92rem;
+    }
+    .summary-row:last-child {
+        border-bottom: none;
+        padding-top: 10px;
+    }
+
+    /* Explanation Banner for High Amount */
+    .rbi-notice-card {
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 22px;
+        text-align: left;
+        font-size: 0.88rem;
+        line-height: 1.5;
+        color: #fca5a5;
+    }
+    .rbi-notice-title {
+        font-weight: 800;
+        color: #ef4444;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+        font-size: 0.95rem;
+    }
+    .rbi-limits-table {
+        margin: 10px 0;
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.82rem;
+    }
+    .rbi-limits-table td {
+        padding: 4px 6px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .rbi-limits-table td:first-child {
+        color: #cbd5e1;
+    }
+    .rbi-limits-table td:last-child {
+        text-align: right;
+        font-weight: 700;
+    }
+
+    /* Wallet Sandbox Test Box */
+    .wallet-test-box {
+        background: rgba(0, 230, 118, 0.08);
+        border: 1px solid rgba(0, 230, 118, 0.35);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 22px;
+        text-align: left;
+    }
+    .wallet-test-title {
+        font-weight: 800;
+        color: #00e676;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+        font-size: 0.95rem;
+    }
+    .wallet-test-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #00e676, #00b0ff);
+        color: #000000;
+        border: none;
+        padding: 14px 20px;
+        border-radius: 10px;
+        font-size: 1.05rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    .wallet-test-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 230, 118, 0.45);
+    }
+
+    .pay-btn-main {
+        width: 100%;
+        background: linear-gradient(135deg, #00d2ff, #0055ff);
+        color: #ffffff;
+        border: none;
+        padding: 15px 24px;
+        border-radius: 10px;
+        font-size: 1.05rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
+    }
+    .pay-btn-main:hover {
+        opacity: 0.95;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 210, 255, 0.45);
+    }
+    .cancel-link {
+        display: inline-block;
+        margin-top: 18px;
+        color: #94a3b8;
+        font-size: 0.88rem;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    .cancel-link:hover {
+        color: #ef4444;
+    }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="container">
+    <div class="payment-modal-box">
+        <div class="payment-icon-glow">⚡</div>
+        <h1 class="payment-title">Complete Your Payment</h1>
+        <p class="payment-subtitle">Digital Wallets, UPI, Cards &amp; NetBanking via Razorpay</p>
+
+        <!-- Order Summary -->
+        <div class="payment-summary-card">
+            <div class="summary-row">
+                <span style="color: #94a3b8;">Order UUID:</span>
+                <span style="color: #cbd5e1; font-family: monospace; font-size: 0.88rem;">{{ order.order_id }}</span>
+            </div>
+            <div class="summary-row">
+                <span style="color: #94a3b8;">Customer:</span>
+                <span style="color: #ffffff; font-weight: 600;">{{ user_name|default:request.user.username }}</span>
+            </div>
+            <div class="summary-row">
+                <span style="color: #94a3b8;">Selected Method:</span>
+                <span style="color: #00d2ff; font-weight: 600;">
+                    {% if payment_method == 'WALLET' %}
+                        👛 Digital Wallets
+                    {% elif payment_method == 'CARD' %}
+                        💳 Credit / Debit Cards
+                    {% elif payment_method == 'NETBANKING' %}
+                        🏦 Net Banking
+                    {% else %}
+                        ⚡ UPI / Online
+                    {% endif %}
+                </span>
+            </div>
+            <div class="summary-row">
+                <span style="color: #ffffff; font-size: 1.05rem; font-weight: 700;">Total Order Amount:</span>
+                <span style="color: #00e676; font-size: 1.3rem; font-weight: 800;">₹{{ order.total_amount }}</span>
+            </div>
+        </div>
+
+        {% if order.total_amount > 10000 %}
+        <!-- RBI Regulatory Notice for High Amounts -->
+        <div class="rbi-notice-card">
+            <div class="rbi-notice-title">
+                <span>⚠️ Why Wallets are hidden by Razorpay for ₹{{ order.total_amount }}:</span>
+            </div>
+            <div>
+                Under <strong>Reserve Bank of India (RBI)</strong> and <strong>NPCI</strong> regulations, digital payment methods have strict transaction caps in India:
+            </div>
+            <table class="rbi-limits-table">
+                <tr>
+                    <td>👛 Digital Wallets (Mobikwik, Freecharge, etc.)</td>
+                    <td style="color: #ef4444;">Max ₹10,000 / transaction</td>
+                </tr>
+                <tr>
+                    <td>📱 UPI (GPay, PhonePe, Paytm, BHIM)</td>
+                    <td style="color: #f59e0b;">Max ₹1,00,000 / transaction</td>
+                </tr>
+                <tr>
+                    <td>💳 Credit/Debit Cards &amp; 🏦 NetBanking</td>
+                    <td style="color: #00e676;">No Limit (Permitted for ₹2.64 Lakhs)</td>
+                </tr>
+            </table>
+            <div style="font-size: 0.82rem; color: #cbd5e1; margin-top: 6px;">
+                Because this cart total is <strong>₹{{ order.total_amount }}</strong>, Razorpay's servers automatically filter out Wallets and UPI, leaving only Cards and Netbanking.
+            </div>
+        </div>
+
+        <!-- 1-Click Sandbox Wallet Test Option -->
+        <div class="wallet-test-box">
+            <div class="wallet-test-title">
+                <span>🧪 Test Digital Wallets in Razorpay (Sandbox)</span>
+            </div>
+            <div style="font-size: 0.84rem; color: #cbd5e1;">
+                Click the button below to open Razorpay with a <strong>₹100 test amount</strong>. This will immediately display the <strong>Wallets (Mobikwik, Freecharge, Airtel Money, etc.)</strong> option in the Razorpay popup:
+            </div>
+            <button type="button" class="wallet-test-btn" onclick="openTestRazorpay()">
+                👛 Open Razorpay Popup for ₹100 (Shows Wallets)
+            </button>
+        </div>
+        {% endif %}
+
+        <!-- Pay Real Full Amount Button -->
+        <button type="button" id="pay-btn" class="pay-btn-main" onclick="openRazorpay()">
+            ⚡ Pay Full ₹{{ order.total_amount }} (Cards &amp; NetBanking)
+        </button>
+
+        <div>
+            <a href="{% url 'checkout' %}" class="cancel-link">← Cancel &amp; Return to Checkout</a>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden Form for Payment Callback Verification -->
+<form id="razorpay-form" action="{% url 'payment_callback' %}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
+    <input type="hidden" name="razorpay_order_id" id="razorpay_order_id">
+    <input type="hidden" name="razorpay_signature" id="razorpay_signature">
+</form>
+
+<script>
+    function getStandardRazorpayOptions(orderId, amountPaise, preferredMethod) {
+        var prefill = {
+            "name": "{{ user_name|default:request.user.username }}",
+            "email": "{{ user_email|default:request.user.email|default:'customer@pchub.com' }}",
+            "contact": "{{ user_phone|default:'9999999999' }}"
+        };
+
+        if (preferredMethod) {
+            prefill.method = preferredMethod;
+        }
+
+        return {
+            "key": "{{ razorpay_key_id }}",
+            "amount": amountPaise,
+            "currency": "{{ currency }}",
+            "name": "NEXORIG",
+            "description": "Order Payment #{{ order.order_id }}",
+            "order_id": orderId,
+            "handler": function (response) {
+                document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+                document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
+                document.getElementById('razorpay_signature').value = response.razorpay_signature;
+                document.getElementById('razorpay-form').submit();
+            },
+            "prefill": prefill,
+            "theme": {
+                "color": "#00d2ff"
+            },
+            "modal": {
+                "ondismiss": function() {
+                    console.log("Razorpay modal closed.");
+                }
+            }
+        };
+    }
+
+    // Opens Razorpay for the actual order total (Cards and Netbanking for high amounts)
+    function openRazorpay() {
+        var opts = getStandardRazorpayOptions("{{ razorpay_order_id }}", "{{ amount }}", "");
+        var rzp = new Razorpay(opts);
+        rzp.open();
+    }
+
+    // Opens Razorpay for ₹100 so Wallets appear immediately in the popup
+    function openTestRazorpay() {
+        var testOrderId = "{{ test_razorpay_order_id|default:razorpay_order_id }}";
+        var testAmountPaise = 10000; // ₹100.00
+        var opts = getStandardRazorpayOptions(testOrderId, testAmountPaise, "wallet");
+        var rzp = new Razorpay(opts);
+        rzp.open();
+    }
+</script>
+{% endblock content %}

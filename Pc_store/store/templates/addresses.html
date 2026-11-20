@@ -1,0 +1,432 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}My Addresses | NEXORIG{% endblock title %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}?v=4.0">
+    <style>
+        .addresses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+        .address-card {
+            background: #141724;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .address-card:hover {
+            border-color: #00d2ff;
+            box-shadow: 0 4px 20px rgba(0, 210, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        .address-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .address-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+        }
+        .address-badge {
+            background: rgba(0, 210, 255, 0.15);
+            color: #00d2ff;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .address-details {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+        .address-details strong {
+            color: #fff;
+        }
+        .address-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: flex-end;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .btn-delete-addr {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 77, 77, 0.12);
+            color: #ff5252;
+            border: 1px solid rgba(255, 77, 77, 0.3);
+            border-radius: 8px;
+            padding: 7px 14px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+        .btn-delete-addr:hover {
+            background: rgba(255, 77, 77, 0.25);
+            border-color: #ff5252;
+            color: #ff6b6b;
+            transform: translateY(-1px);
+        }
+        .add-address-panel {
+            background: #141724;
+            border: 1px solid rgba(0, 210, 255, 0.4);
+            border-radius: 16px;
+            padding: 28px;
+            margin-top: 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 25px rgba(0, 210, 255, 0.1);
+        }
+        .addr-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 14px;
+        }
+        .addr-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .addr-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .addr-input {
+            width: 100%;
+            padding: 12px 14px;
+            background: #10121a;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        .addr-input:focus {
+            border-color: #00d2ff;
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+            background: #0d0f17;
+        }
+        .addr-input option {
+            background: #10121a;
+            color: #ffffff;
+            padding: 8px;
+        }
+        .btn-add-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #00d2ff 0%, #0070f3 100%);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.25s ease;
+        }
+        .btn-add-primary:hover {
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+            transform: translateY(-2px);
+        }
+    </style>
+{% endblock extra_css %}
+
+{% block content %}
+<section class="cart-page-section">
+    <div class="cart-container">
+
+        <!-- Header -->
+        <div class="cart-header">
+            <div class="cart-title-wrap">
+                <div class="cart-icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="cart-title">My Addresses</h1>
+                </div>
+                <span class="cart-count-pill">{{ addresses|length }} Saved Address{{ addresses|length|pluralize }}</span>
+            </div>
+
+            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                <button type="button" class="btn-add-primary" onclick="toggleAddForm()" id="toggle_form_btn">
+                    <span>+ Add New Address</span>
+                </button>
+                <a href="{% url 'home' %}" class="btn btn-outline btn-sm">
+                    ← Back to Shop
+                </a>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {{ message.tags }} my-3" role="alert">
+                    <strong>{{ message }}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Collapsible Add Address Form Panel -->
+        <div id="add_address_panel" class="add-address-panel" {% if addresses %}style="display: none;"{% endif %}>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+                <h3 style="margin: 0; font-family: 'Outfit', sans-serif; font-size: 1.25rem; color: #00d2ff;">
+                    📍 Add a Delivery Address
+                </h3>
+                {% if addresses %}
+                    <button type="button" onclick="toggleAddForm()" style="background: none; border: none; color: #94a3b8; font-size: 1.2rem; cursor: pointer;">
+                        ✕
+                    </button>
+                {% endif %}
+            </div>
+
+            <form method="POST" action="{% url 'addresses' %}" id="addresses_add_form">
+                {% csrf_token %}
+
+                <!-- Full Name & Phone -->
+                <div class="addr-form-grid">
+                    <div class="addr-field">
+                        <label class="addr-label" for="full_name">Full Name</label>
+                        <input type="text" id="full_name" name="full_name" class="addr-input" placeholder="e.g. Rahul Sharma" value="{{ request.user.username }}" required>
+                    </div>
+                    <div class="addr-field">
+                        <label class="addr-label" for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" class="addr-input" placeholder="10-digit mobile number" required pattern="[0-9]{10}">
+                    </div>
+                </div>
+
+                <!-- Flat / House No -->
+                <div class="addr-field" style="margin-top: 14px;">
+                    <label class="addr-label" for="house_no">Flat, House No., Building Name</label>
+                    <input type="text" id="house_no" name="house_no" class="addr-input" placeholder="e.g. Flat 402, Skyline Towers" required>
+                </div>
+
+                <!-- Street / Area / Landmark -->
+                <div class="addr-field" style="margin-top: 14px;">
+                    <label class="addr-label" for="street">Area, Street, Sector, Landmark</label>
+                    <input type="text" id="street" name="street" class="addr-input" placeholder="e.g. MG Road, Near Central Metro Station" required>
+                </div>
+
+                <!-- State & City Dropdown Choices -->
+                <div class="addr-form-grid">
+                    <!-- State Selection -->
+                    <div class="addr-field">
+                        <label class="addr-label" for="addr_state_select">State</label>
+                        <select id="addr_state_select" name="state" class="addr-input" required style="cursor: pointer;">
+                            <option value="">-- Select State --</option>
+                            {% for s in states %}
+                                <option value="{{ s }}">{{ s }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- City Selection -->
+                    <div class="addr-field">
+                        <label class="addr-label" for="addr_city_select">City</label>
+                        <select id="addr_city_select" name="city" class="addr-input" required style="cursor: pointer;">
+                            <option value="">-- First Select State --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Custom City field if 'Other' chosen -->
+                <div class="addr-field" id="addr_other_city_box" style="display: none; margin-top: 14px;">
+                    <label class="addr-label" for="addr_custom_city">Type Your City Name</label>
+                    <input type="text" id="addr_custom_city" class="addr-input" placeholder="Enter city / town name">
+                </div>
+
+                <!-- Pincode & Address Type -->
+                <div class="addr-form-grid">
+                    <div class="addr-field">
+                        <label class="addr-label" for="pincode">Pincode</label>
+                        <input type="text" id="pincode" name="pincode" class="addr-input" placeholder="6-digit pincode" required pattern="[0-9]{6}">
+                    </div>
+                    <div class="addr-field">
+                        <label class="addr-label">Address Type</label>
+                        <div style="display: flex; gap: 20px; margin-top: 12px;">
+                            <label style="display: flex; align-items: center; gap: 8px; color: #cbd5e1; cursor: pointer; font-size: 0.95rem;">
+                                <input type="radio" name="address_type" value="home" checked style="accent-color: #00d2ff; width: 18px; height: 18px;">
+                                <span>🏠 Home</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; color: #cbd5e1; cursor: pointer; font-size: 0.95rem;">
+                                <input type="radio" name="address_type" value="work" style="accent-color: #00d2ff; width: 18px; height: 18px;">
+                                <span>🏢 Work</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="margin-top: 24px; display: flex; gap: 14px;">
+                    <button type="submit" class="btn-add-primary">
+                        <span>Save Address</span>
+                    </button>
+                    {% if addresses %}
+                        <button type="button" onclick="toggleAddForm()" class="btn btn-outline btn-sm" style="padding: 10px 20px;">
+                            Cancel
+                        </button>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+
+        <!-- Saved Addresses List -->
+        {% if addresses %}
+            <div class="addresses-grid">
+                {% for addr in addresses %}
+                    <div class="address-card">
+                        <div>
+                            <div class="address-header">
+                                <h3 class="address-name">{{ addr.full_name|default:request.user.username }}</h3>
+                                <span class="address-badge">
+                                    {% if addr.address_type == 'work' %}🏢 WORK{% else %}🏠 HOME{% endif %}
+                                </span>
+                            </div>
+                            <div class="address-details">
+                                <div>{{ addr.address_line1 }}</div>
+                                {% if addr.address_line2 %}
+                                    <div>{{ addr.address_line2 }}</div>
+                                {% endif %}
+                                <div><strong>{{ addr.city }}, {{ addr.state }}</strong></div>
+                                <div>PIN: <strong>{{ addr.postal_code }}</strong> &bull; India</div>
+                                {% if addr.phone %}
+                                    <div style="margin-top: 8px; color: #94a3b8; font-size: 0.9rem;">
+                                        📞 <strong>{{ addr.phone }}</strong>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Actions (Remove Address) -->
+                        <div class="address-actions">
+                            <a href="{% url 'remove_address' addr.id %}" 
+                               onclick="return confirm('Are you sure you want to remove this address?');" 
+                               class="btn-delete-addr">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                </svg>
+                                <span>Remove</span>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+        {% elif not addresses and not order_placed %}
+            <!-- No Addresses State -->
+            <div style="text-align: center; padding: 40px 20px; background: #141724; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.08); margin-top: 24px;">
+                <div style="font-size: 3rem; margin-bottom: 12px;">📍</div>
+                <h2 style="color: #fff; font-family: 'Outfit', sans-serif; font-size: 1.5rem; margin-bottom: 8px;">No Saved Addresses</h2>
+                <p style="color: #94a3b8; font-size: 0.95rem; margin-bottom: 20px;">
+                    You have not added any delivery address yet. Add your address for 1-click express checkout!
+                </p>
+                <button type="button" class="btn-add-primary" onclick="toggleAddForm()">
+                    <span>+ Add Your First Address</span>
+                </button>
+            </div>
+        {% endif %}
+
+    </div>
+</section>
+
+<!-- Basic JavaScript to link State & City choices and toggle form -->
+<script>
+    const statesAndCities = {{ states_and_cities_json|safe }};
+    const stateSel = document.getElementById('addr_state_select');
+    const citySel = document.getElementById('addr_city_select');
+    const otherCityBox = document.getElementById('addr_other_city_box');
+    const customCityInp = document.getElementById('addr_custom_city');
+    const addPanel = document.getElementById('add_address_panel');
+    const toggleBtn = document.getElementById('toggle_form_btn');
+    const form = document.getElementById('addresses_add_form');
+
+    // Toggle form function
+    function toggleAddForm() {
+        if (!addPanel) return;
+        if (addPanel.style.display === 'none' || addPanel.style.display === '') {
+            addPanel.style.display = 'block';
+            if (toggleBtn) toggleBtn.innerHTML = '<span>✕ Close Form</span>';
+            const house = document.getElementById('house_no');
+            if (house) house.focus();
+        } else {
+            addPanel.style.display = 'none';
+            if (toggleBtn) toggleBtn.innerHTML = '<span>+ Add New Address</span>';
+        }
+    }
+
+    // Update cities when state changed
+    if (stateSel && citySel) {
+        stateSel.addEventListener('change', function() {
+            const state = this.value;
+            citySel.innerHTML = '<option value="">-- Select City --</option>';
+            if (otherCityBox) otherCityBox.style.display = 'none';
+            if (customCityInp) customCityInp.value = '';
+
+            if (state && statesAndCities[state]) {
+                const cities = statesAndCities[state];
+                for (let i = 0; i < cities.length; i++) {
+                    const opt = document.createElement('option');
+                    opt.value = cities[i];
+                    opt.textContent = cities[i];
+                    citySel.appendChild(opt);
+                }
+            }
+        });
+
+        citySel.addEventListener('change', function() {
+            if (this.value === 'Other') {
+                if (otherCityBox) {
+                    otherCityBox.style.display = 'block';
+                    if (customCityInp) customCityInp.focus();
+                }
+            } else {
+                if (otherCityBox) otherCityBox.style.display = 'none';
+            }
+        });
+    }
+
+    // Custom city before submit
+    if (form && citySel) {
+        form.addEventListener('submit', function() {
+            if (citySel.value === 'Other' && customCityInp && customCityInp.value.trim() !== '') {
+                citySel.options[citySel.selectedIndex].value = customCityInp.value.trim();
+            }
+        });
+    }
+</script>
+{% endblock content %}

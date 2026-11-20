@@ -1,0 +1,655 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard &bull; NEXORIG{% endblock title %}
+
+{% block extra_css %}
+<style>
+    .dashboard-section {
+        padding: 40px 0 80px 0;
+        min-height: 85vh;
+    }
+    .dashboard-container {
+        max-width: 1250px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    .dashboard-top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .dash-title-group h1 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 2rem;
+        font-weight: 800;
+        color: #ffffff;
+        margin: 0 0 6px 0;
+    }
+    .dash-role-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(0, 210, 255, 0.15);
+        color: #00d2ff;
+        border: 1px solid rgba(0, 210, 255, 0.3);
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    .admin-quick-links {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    .btn-dash-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 16px;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    .btn-dash-primary {
+        background: #00d2ff;
+        color: #000000;
+    }
+    .btn-dash-primary:hover {
+        background: #38bdf8;
+        transform: translateY(-1px);
+    }
+    .btn-dash-outline {
+        background: #141724;
+        color: #cbd5e1;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .btn-dash-outline:hover {
+        color: #ffffff;
+        border-color: #00d2ff;
+    }
+
+    /* KPI Stats Grid */
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 18px;
+        margin-bottom: 35px;
+    }
+    .kpi-card {
+        background: #141724;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .kpi-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(0, 210, 255, 0.4);
+    }
+    .kpi-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+    }
+    .kpi-label {
+        font-size: 0.85rem;
+        color: #94a3b8;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+    .kpi-icon-box {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+    }
+    .kpi-val {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #ffffff;
+        margin-bottom: 6px;
+    }
+    .kpi-note {
+        font-size: 0.8rem;
+        color: #94a3b8;
+    }
+
+    /* Tabs Styling */
+    .dashboard-tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 24px;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.06);
+        padding-bottom: 10px;
+        overflow-x: auto;
+    }
+    .tab-btn {
+        background: transparent;
+        border: none;
+        color: #94a3b8;
+        padding: 10px 20px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+    }
+    .tab-btn:hover {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.04);
+    }
+    .tab-btn.active {
+        color: #00d2ff;
+        background: rgba(0, 210, 255, 0.12);
+        border: 1px solid rgba(0, 210, 255, 0.3);
+    }
+    .tab-badge {
+        background: #ef4444;
+        color: #ffffff;
+        font-size: 0.72rem;
+        padding: 2px 7px;
+        border-radius: 12px;
+        font-weight: 700;
+    }
+    .tab-badge-cyan {
+        background: rgba(0, 210, 255, 0.2);
+        color: #00d2ff;
+        font-size: 0.72rem;
+        padding: 2px 7px;
+        border-radius: 12px;
+    }
+
+    /* Tab Content Cards */
+    .dash-panel-box {
+        background: #141724;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+    .table-responsive {
+        overflow-x: auto;
+    }
+    .dash-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+    .dash-table th {
+        text-align: left;
+        padding: 14px 16px;
+        color: #94a3b8;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.78rem;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .dash-table td {
+        padding: 14px 16px;
+        color: #cbd5e1;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        vertical-align: middle;
+    }
+    .dash-table tr:hover td {
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Status Badges */
+    .status-pill {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    .pill-confirmed {
+        background: rgba(0, 230, 118, 0.15);
+        color: #00e676;
+        border: 1px solid rgba(0, 230, 118, 0.3);
+    }
+    .pill-delivered {
+        background: rgba(0, 210, 255, 0.15);
+        color: #00d2ff;
+        border: 1px solid rgba(0, 210, 255, 0.3);
+    }
+    .pill-pending {
+        background: rgba(255, 171, 0, 0.15);
+        color: #ffab00;
+        border: 1px solid rgba(255, 171, 0, 0.3);
+    }
+    .pill-cancelled {
+        background: rgba(255, 77, 77, 0.15);
+        color: #ff5252;
+        border: 1px solid rgba(255, 77, 77, 0.3);
+    }
+    .pill-resolved {
+        background: rgba(0, 230, 118, 0.15);
+        color: #00e676;
+        border: 1px solid rgba(0, 230, 118, 0.3);
+    }
+    .status-select {
+        background: #0f121d;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #ffffff;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.82rem;
+        cursor: pointer;
+        outline: none;
+    }
+    .status-select:focus {
+        border-color: #00d2ff;
+    }
+    .msg-preview {
+        max-width: 280px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 0.85rem;
+        color: #94a3b8;
+    }
+    .msg-preview:hover {
+        white-space: normal;
+        overflow: visible;
+        color: #cbd5e1;
+    }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<section class="dashboard-section">
+    <div class="dashboard-container">
+
+        <!-- Top Header Bar -->
+        <div class="dashboard-top-bar">
+            <div class="dash-title-group">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+                    <h1>Admin Command Center</h1>
+                    <span class="dash-role-badge">⚡ Superuser / Staff</span>
+                </div>
+                <div style="color: #94a3b8; font-size: 0.92rem;">
+                    Real-time NEXORIG hardware store statistics, orders, customer enquiries &amp; inventory.
+                </div>
+            </div>
+
+            <!-- Quick Action Links -->
+            <div class="admin-quick-links">
+                <a href="{% url 'contact_us' %}" class="btn-dash-action btn-dash-outline" target="_blank">
+                    <span>💬 Test Enquiries Page</span>
+                </a>
+                <a href="/admin/" class="btn-dash-action btn-dash-primary" target="_blank">
+                    <span>⚙️ Django Admin Panel</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- System Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {{ message.tags }} my-3" role="alert">
+                    <strong>{{ message }}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- KPI Summary Cards -->
+        <div class="kpi-grid">
+            <!-- 1. Total Revenue -->
+            <div class="kpi-card" style="border-left: 3px solid #00e676;">
+                <div class="kpi-top">
+                    <span class="kpi-label">Total Revenue</span>
+                    <div class="kpi-icon-box" style="background: rgba(0, 230, 118, 0.15); color: #00e676;">₹</div>
+                </div>
+                <div class="kpi-val" style="color: #00e676;">₹{{ total_revenue|floatformat:2 }}</div>
+                <div class="kpi-note">Confirmed &amp; Completed Sales</div>
+            </div>
+
+            <!-- 2. Total Orders -->
+            <div class="kpi-card" style="border-left: 3px solid #00d2ff;">
+                <div class="kpi-top">
+                    <span class="kpi-label">Total Orders</span>
+                    <div class="kpi-icon-box" style="background: rgba(0, 210, 255, 0.15); color: #00d2ff;">📦</div>
+                </div>
+                <div class="kpi-val" style="color: #00d2ff;">{{ total_orders }}</div>
+                <div class="kpi-note">{{ confirmed_orders }} Confirmed &bull; {{ pending_orders }} Pending</div>
+            </div>
+
+            <!-- 3. Customer Enquiries -->
+            <div class="kpi-card" style="border-left: 3px solid #f59e0b;">
+                <div class="kpi-top">
+                    <span class="kpi-label">Customer Enquiries</span>
+                    <div class="kpi-icon-box" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">📩</div>
+                </div>
+                <div class="kpi-val" style="color: #f59e0b;">{{ total_enquiries }}</div>
+                <div class="kpi-note">
+                    {% if pending_enquiries > 0 %}
+                        <strong style="color: #ef4444;">{{ pending_enquiries }} Pending Action</strong>
+                    {% else %}
+                        All caught up!
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- 4. Products in Catalog -->
+            <div class="kpi-card" style="border-left: 3px solid #a855f7;">
+                <div class="kpi-top">
+                    <span class="kpi-label">Catalog Products</span>
+                    <div class="kpi-icon-box" style="background: rgba(168, 85, 247, 0.15); color: #a855f7;">🖥️</div>
+                </div>
+                <div class="kpi-val">{{ total_products }}</div>
+                <div class="kpi-note">
+                    {% if low_stock_products > 0 %}
+                        <span style="color: #ffab00;">{{ low_stock_products }} Low/Out of Stock</span>
+                    {% else %}
+                        Healthy Inventory
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- 5. Registered Customers -->
+            <div class="kpi-card" style="border-left: 3px solid #3b82f6;">
+                <div class="kpi-top">
+                    <span class="kpi-label">Active Users</span>
+                    <div class="kpi-icon-box" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">👥</div>
+                </div>
+                <div class="kpi-val">{{ total_users }}</div>
+                <div class="kpi-note">Registered NEXORIG Gamers</div>
+            </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="dashboard-tabs">
+            <button type="button" class="tab-btn active" id="tab_btn_enquiries" onclick="switchTab('enquiries')">
+                <span>📩 Customer Enquiries</span>
+                {% if pending_enquiries > 0 %}
+                    <span class="tab-badge">{{ pending_enquiries }} New</span>
+                {% else %}
+                    <span class="tab-badge-cyan">{{ total_enquiries }}</span>
+                {% endif %}
+            </button>
+
+            <button type="button" class="tab-btn" id="tab_btn_orders" onclick="switchTab('orders')">
+                <span>📦 Recent Orders</span>
+                <span class="tab-badge-cyan">{{ total_orders }}</span>
+            </button>
+
+            <button type="button" class="tab-btn" id="tab_btn_products" onclick="switchTab('products')">
+                <span>🖥️ Products &amp; Stock</span>
+                <span class="tab-badge-cyan">{{ total_products }}</span>
+            </button>
+        </div>
+
+        <!-- 1. Enquiries Tab Panel -->
+        <div id="panel_enquiries" class="dash-panel-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <h3 style="color: #ffffff; margin: 0 0 4px 0; font-size: 1.25rem; font-weight: 700;">Customer Enquiries &amp; Quotations</h3>
+                    <div style="color: #94a3b8; font-size: 0.85rem;">Questions submitted via the contact &amp; enquiry page.</div>
+                </div>
+                <a href="{% url 'contact_us' %}" class="btn-dash-action btn-dash-outline" style="font-size: 0.82rem;" target="_blank">
+                    + Open Customer Enquiry Form
+                </a>
+            </div>
+
+            {% if enquiries_list %}
+                <div class="table-responsive">
+                    <table class="dash-table">
+                        <thead>
+                            <tr>
+                                <th>#ID</th>
+                                <th>Customer</th>
+                                <th>Contact</th>
+                                <th>Topic / Subject</th>
+                                <th>Message</th>
+                                <th>Received On</th>
+                                <th>Status</th>
+                                <th>Update Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for enq in enquiries_list %}
+                                <tr>
+                                    <td style="font-weight: 700; color: #00d2ff;">#{{ enq.id }}</td>
+                                    <td>
+                                        <div style="font-weight: 600; color: #fff;">{{ enq.name }}</div>
+                                    </td>
+                                    <td>
+                                        <div style="font-size: 0.85rem; color: #cbd5e1;">{{ enq.email }}</div>
+                                        {% if enq.phone %}
+                                            <div style="font-size: 0.8rem; color: #94a3b8;">📞 {{ enq.phone }}</div>
+                                        {% endif %}
+                                    </td>
+                                    <td style="font-weight: 600; color: #00d2ff;">
+                                        {{ enq.subject }}
+                                    </td>
+                                    <td>
+                                        <div class="msg-preview" title="{{ enq.message }}">{{ enq.message }}</div>
+                                    </td>
+                                    <td style="font-size: 0.82rem; color: #94a3b8; white-space: nowrap;">
+                                        {{ enq.created_at|date:"d M Y, h:i A" }}
+                                    </td>
+                                    <td>
+                                        <span class="status-pill {% if enq.status == 'Resolved' %}pill-resolved{% elif enq.status == 'In Progress' %}pill-delivered{% else %}pill-pending{% endif %}">
+                                            {{ enq.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <form method="POST" action="{% url 'update_enquiry_status' enq.id %}" style="display: flex; gap: 6px; align-items: center;">
+                                            {% csrf_token %}
+                                            <select name="status" class="status-select" onchange="this.form.submit()">
+                                                <option value="Pending" {% if enq.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                                <option value="In Progress" {% if enq.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                                                <option value="Resolved" {% if enq.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: 40px 20px; color: #94a3b8;">
+                    <div style="font-size: 2.2rem; margin-bottom: 10px;">📭</div>
+                    <div style="font-weight: 700; color: #fff; margin-bottom: 6px;">No Customer Enquiries Yet</div>
+                    <p style="font-size: 0.9rem; margin-bottom: 16px;">When customers submit hardware inquiries on the website, they will appear here.</p>
+                    <a href="{% url 'contact_us' %}" class="btn-dash-action btn-dash-outline">Submit Test Enquiry</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- 2. Recent Orders Tab Panel -->
+        <div id="panel_orders" class="dash-panel-box" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <h3 style="color: #ffffff; margin: 0 0 4px 0; font-size: 1.25rem; font-weight: 700;">Recent Orders</h3>
+                    <div style="color: #94a3b8; font-size: 0.85rem;">Latest hardware orders placed by customers.</div>
+                </div>
+                <a href="/admin/store/order/" class="btn-dash-action btn-dash-outline" style="font-size: 0.82rem;" target="_blank">
+                    Manage Orders in Django Admin &rarr;
+                </a>
+            </div>
+
+            {% if recent_orders %}
+                <div class="table-responsive">
+                    <table class="dash-table">
+                        <thead>
+                            <tr>
+                                <th>Order UUID</th>
+                                <th>Customer</th>
+                                <th>Total (₹)</th>
+                                <th>Payment Method</th>
+                                <th>Razorpay IDs</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ord in recent_orders %}
+                                <tr>
+                                    <td>
+                                        <div style="font-weight: 700; color: #00d2ff; font-family: monospace; font-size: 0.85rem;">
+                                            {{ ord.order_id }}
+                                        </div>
+                                        <div style="font-size: 0.75rem; color: #94a3b8;">ID: #{{ ord.id }}</div>
+                                    </td>
+                                    <td>
+                                        <div style="font-weight: 600; color: #ffffff;">{{ ord.user.username }}</div>
+                                        <div style="font-size: 0.78rem; color: #94a3b8;">{{ ord.user.email|default:"No email" }}</div>
+                                    </td>
+                                    <td style="font-weight: 800; color: #00e676; font-size: 0.95rem;">
+                                        ₹{{ ord.total_amount|floatformat:2 }}
+                                    </td>
+                                    <td>
+                                        <span style="background: rgba(255, 255, 255, 0.08); padding: 3px 8px; border-radius: 4px; font-size: 0.78rem; font-weight: 600;">
+                                            {{ ord.payment_method }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if ord.razorpay_order_id %}
+                                            <div style="font-size: 0.75rem; font-family: monospace; color: #00d2ff;">
+                                                Ord: {{ ord.razorpay_order_id }}
+                                            </div>
+                                        {% endif %}
+                                        {% if ord.razorpay_payment_id %}
+                                            <div style="font-size: 0.75rem; font-family: monospace; color: #00e676;">
+                                                Pay: {{ ord.razorpay_payment_id }}
+                                            </div>
+                                        {% endif %}
+                                        {% if not ord.razorpay_order_id and not ord.razorpay_payment_id %}
+                                            <span style="color: #64748b; font-size: 0.8rem;">COD (Offline)</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="status-pill {% if ord.status == 'Confirmed' %}pill-confirmed{% elif ord.status == 'Delivered' %}pill-delivered{% elif ord.status == 'Cancelled' %}pill-cancelled{% else %}pill-pending{% endif %}">
+                                            {{ ord.status }}
+                                        </span>
+                                    </td>
+                                    <td style="font-size: 0.82rem; color: #94a3b8; white-space: nowrap;">
+                                        {{ ord.created_at|date:"d M Y, h:i A" }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: 40px 20px; color: #94a3b8;">
+                    <div style="font-size: 2.2rem; margin-bottom: 10px;">📦</div>
+                    <div style="font-weight: 700; color: #fff; margin-bottom: 6px;">No Orders Placed Yet</div>
+                    <p style="font-size: 0.9rem;">Customer orders will appear here automatically.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- 3. Products & Stock Tab Panel -->
+        <div id="panel_products" class="dash-panel-box" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <h3 style="color: #ffffff; margin: 0 0 4px 0; font-size: 1.25rem; font-weight: 700;">Hardware Inventory</h3>
+                    <div style="color: #94a3b8; font-size: 0.85rem;">Stock levels and pricing of store products.</div>
+                </div>
+                <a href="/admin/store/product/add/" class="btn-dash-action btn-dash-primary" style="font-size: 0.82rem;" target="_blank">
+                    + Add New Product
+                </a>
+            </div>
+
+            {% if products_list %}
+                <div class="table-responsive">
+                    <table class="dash-table">
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Category</th>
+                                <th>Price (₹)</th>
+                                <th>Stock Status</th>
+                                <th>Added Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for prod in products_list %}
+                                <tr>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            {% if prod.product_image %}
+                                                <img src="{{ prod.product_image.url }}" alt="{{ prod.product_name }}" style="width: 36px; height: 36px; border-radius: 6px; object-fit: contain; background: #0f121d;">
+                                            {% else %}
+                                                <div style="width: 36px; height: 36px; border-radius: 6px; background: #0f121d; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">🖥️</div>
+                                            {% endif %}
+                                            <a href="{% url 'product_detail' prod.product_slug %}" style="color: #ffffff; font-weight: 600; text-decoration: none;" target="_blank">
+                                                {{ prod.product_name }}
+                                            </a>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span style="color: #00d2ff; font-weight: 600;">{{ prod.product_category.category_name }}</span>
+                                    </td>
+                                    <td style="font-weight: 700; color: #00e676;">
+                                        ₹{{ prod.product_price|floatformat:2 }}
+                                    </td>
+                                    <td>
+                                        {% if prod.product_quantity_in_stock > 10 %}
+                                            <span style="color: #00e676; font-weight: 700;">{{ prod.product_quantity_in_stock }} Units In Stock</span>
+                                        {% elif prod.product_quantity_in_stock > 0 %}
+                                            <span style="color: #ffab00; font-weight: 700;">⚠️ {{ prod.product_quantity_in_stock }} Units Left</span>
+                                        {% else %}
+                                            <span style="color: #ff5252; font-weight: 700;">❌ Out of Stock</span>
+                                        {% endif %}
+                                    </td>
+                                    <td style="font-size: 0.82rem; color: #94a3b8;">
+                                        {{ prod.product_created_at|date:"d M Y" }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: 40px 20px; color: #94a3b8;">
+                    <p>No products found in the catalog.</p>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+</section>
+
+<!-- Vanilla JS Tab Switching -->
+<script>
+    function switchTab(tabName) {
+        // Panels
+        document.getElementById('panel_enquiries').style.display = (tabName === 'enquiries') ? 'block' : 'none';
+        document.getElementById('panel_orders').style.display = (tabName === 'orders') ? 'block' : 'none';
+        document.getElementById('panel_products').style.display = (tabName === 'products') ? 'block' : 'none';
+
+        // Buttons
+        document.getElementById('tab_btn_enquiries').classList.toggle('active', tabName === 'enquiries');
+        document.getElementById('tab_btn_orders').classList.toggle('active', tabName === 'orders');
+        document.getElementById('tab_btn_products').classList.toggle('active', tabName === 'products');
+    }
+</script>
+{% endblock content %}

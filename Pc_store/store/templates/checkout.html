@@ -1,0 +1,510 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}Checkout | NEXORIG - Premium Hardware Store{% endblock title %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}?v=4.0">
+    <style>
+        .checkout-section-box {
+            background: #141724;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .checkout-section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .saved-address-card {
+            display: flex;
+            gap: 14px;
+            padding: 16px;
+            background: #10121a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .saved-address-card:hover, .saved-address-card.active-addr {
+            border-color: #00d2ff;
+            background: rgba(0, 210, 255, 0.04);
+        }
+        .saved-address-card input[type="radio"] {
+            accent-color: #00d2ff;
+            width: 18px;
+            height: 18px;
+            margin-top: 3px;
+        }
+        .direct-address-box {
+            background: #0d0f17;
+            border: 1px dashed rgba(0, 210, 255, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 16px;
+        }
+        .checkout-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-top: 12px;
+        }
+        .checkout-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .checkout-label {
+            font-size: 0.82rem;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .checkout-input {
+            width: 100%;
+            padding: 11px 14px;
+            background: #141724;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 0.92rem;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        .checkout-input:focus {
+            border-color: #00d2ff;
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+            background: #10121a;
+        }
+        .checkout-input option {
+            background: #141724;
+            color: #ffffff;
+            padding: 8px;
+        }
+        .payment-options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        .payment-option-label {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px;
+            border-radius: 12px;
+            background: #10121a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            color: #ffffff;
+        }
+        .payment-option-label:hover {
+            border-color: #00d2ff;
+            background: rgba(0, 210, 255, 0.05);
+        }
+        .payment-option-label input[type="radio"] {
+            accent-color: #00d2ff;
+            width: 18px;
+            height: 18px;
+        }
+        .order-success-box {
+            text-align: center;
+            padding: 60px 20px;
+            background: #141724;
+            border: 1px solid rgba(0, 230, 118, 0.4);
+            border-radius: 20px;
+            max-width: 600px;
+            margin: 40px auto;
+            box-shadow: 0 0 30px rgba(0, 230, 118, 0.15);
+        }
+        .order-success-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(0, 230, 118, 0.15);
+            border: 2px solid #00e676;
+            color: #00e676;
+            font-size: 2.5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+    </style>
+{% endblock extra_css %}
+
+{% block content %}
+<section class="cart-page-section">
+    <div class="cart-container">
+
+        {% if items %}
+            <!-- Header -->
+            <div class="cart-header">
+                <div class="cart-title-wrap">
+                    <div class="cart-icon-badge">
+                        🔒
+                    </div>
+                    <div>
+                        <h1 class="cart-title">Secure Checkout</h1>
+                    </div>
+                    <span class="cart-count-pill">{{ total_qty }} Item{{ total_qty|pluralize }}</span>
+                </div>
+                <a href="{% url 'cart' %}" class="btn btn-outline btn-sm">
+                    ← Back to Cart
+                </a>
+            </div>
+
+            <!-- Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {{ message.tags }} my-3" role="alert">
+                        <strong>{{ message }}</strong>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST" action="{% url 'process_checkout' %}" id="checkout_form">
+                {% csrf_token %}
+                <div class="cart-layout">
+
+                    <!-- Left Column: Address & Payment -->
+                    <div class="cart-items-panel">
+
+                        <!-- 1. Delivery Address Section -->
+                        <div class="checkout-section-box">
+                            <div class="checkout-section-title">
+                                <span>1. Delivery Address</span>
+                                <a href="{% url 'addresses' %}" style="font-size: 0.85rem; color: #00d2ff; text-decoration: none;">
+                                    + Manage Saved Addresses
+                                </a>
+                            </div>
+
+                            <!-- Saved Addresses List -->
+                            {% if addresses %}
+                                <div style="margin-bottom: 16px;">
+                                    <div style="font-size: 0.88rem; color: #94a3b8; margin-bottom: 10px;">Select a delivery address:</div>
+                                    {% for addr in addresses %}
+                                        <label class="saved-address-card {% if forloop.first %}active-addr{% endif %}">
+                                            <input type="radio" name="selected_address_id" value="{{ addr.id }}" {% if forloop.first %}checked{% endif %}>
+                                            <div style="flex: 1;">
+                                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                                    <strong style="color: #ffffff; font-size: 0.98rem;">{{ addr.full_name|default:request.user.username }}</strong>
+                                                    <span style="background: rgba(0, 210, 255, 0.15); color: #00d2ff; padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase;">{{ addr.address_type }}</span>
+                                                </div>
+                                                <div style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5;">
+                                                    {{ addr.address_line1 }}{% if addr.address_line2 %}, {{ addr.address_line2 }}{% endif %}
+                                                </div>
+                                                <div style="color: #94a3b8; font-size: 0.85rem; margin-top: 4px;">
+                                                    {{ addr.city }}, {{ addr.state }} - <strong>{{ addr.postal_code }}</strong>
+                                                    {% if addr.phone %}&bull; Ph: {{ addr.phone }}{% endif %}
+                                                </div>
+                                            </div>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- Toggle Button to Add Directly -->
+                                <button type="button" id="toggle_direct_btn" onclick="toggleDirectForm()" style="background: transparent; border: 1px solid rgba(0, 210, 255, 0.5); color: #00d2ff; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+                                    + Add New Address Directly Here
+                                </button>
+                            {% endif %}
+
+                            <!-- Direct Address Adding Form -->
+                            <div id="direct_address_container" class="direct-address-box" {% if addresses %}style="display: none;"{% endif %}>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                                    <h3 style="font-size: 1rem; color: #00d2ff; margin: 0; font-weight: 700;">
+                                        📍 {% if addresses %}Add &amp; Use New Address{% else %}Enter Delivery Address{% endif %}
+                                    </h3>
+                                    <span style="font-size: 0.8rem; color: #94a3b8;">Direct Delivery Entry</span>
+                                </div>
+
+                                <div class="checkout-form-grid">
+                                    <!-- Full Name -->
+                                    <div class="checkout-field">
+                                        <label class="checkout-label">Full Name</label>
+                                        <input type="text" name="direct_full_name" id="direct_full_name" class="checkout-input" placeholder="e.g. Rahul Sharma" value="{{ request.user.username }}">
+                                    </div>
+                                    <!-- Phone Number -->
+                                    <div class="checkout-field">
+                                        <label class="checkout-label">Phone Number</label>
+                                        <input type="tel" name="direct_phone" id="direct_phone" class="checkout-input" placeholder="10-digit mobile number">
+                                    </div>
+                                </div>
+
+                                <!-- House / Building -->
+                                <div class="checkout-field" style="margin-top: 14px;">
+                                    <label class="checkout-label">Flat / House No. / Building Name</label>
+                                    <input type="text" name="direct_house_no" id="direct_house_no" class="checkout-input" placeholder="e.g. Flat 302, Galaxy Apartments" {% if not addresses %}required{% endif %}>
+                                </div>
+
+                                <!-- Street / Area -->
+                                <div class="checkout-field" style="margin-top: 14px;">
+                                    <label class="checkout-label">Street / Area / Sector / Landmark</label>
+                                    <input type="text" name="direct_street" id="direct_street" class="checkout-input" placeholder="e.g. MG Road, Near Central Mall">
+                                </div>
+
+                                <!-- State & City Choices Grid -->
+                                <div class="checkout-form-grid">
+                                    <!-- State Dropdown -->
+                                    <div class="checkout-field">
+                                        <label class="checkout-label">State</label>
+                                        <select name="direct_state" id="direct_state_select" class="checkout-input" style="cursor: pointer;">
+                                            <option value="">-- Select State --</option>
+                                            {% for s in states %}
+                                                <option value="{{ s }}">{{ s }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <!-- City Dropdown -->
+                                    <div class="checkout-field">
+                                        <label class="checkout-label">City</label>
+                                        <select name="direct_city" id="direct_city_select" class="checkout-input" style="cursor: pointer;">
+                                            <option value="">-- First Select State --</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Custom City input when 'Other' selected -->
+                                <div class="checkout-field" id="direct_other_city_box" style="display: none; margin-top: 12px;">
+                                    <label class="checkout-label">Type Your City Name</label>
+                                    <input type="text" id="direct_custom_city" class="checkout-input" placeholder="Enter city name">
+                                </div>
+
+                                <!-- Pincode & Type Grid -->
+                                <div class="checkout-form-grid">
+                                    <div class="checkout-field">
+                                        <label class="checkout-label">Pincode</label>
+                                        <input type="text" name="direct_pincode" id="direct_pincode" class="checkout-input" placeholder="6-digit PIN code" maxlength="6">
+                                    </div>
+                                    <div class="checkout-field">
+                                        <label class="checkout-label">Address Type</label>
+                                        <div style="display: flex; gap: 16px; margin-top: 10px;">
+                                            <label style="display: flex; align-items: center; gap: 6px; color: #cbd5e1; cursor: pointer; font-size: 0.9rem;">
+                                                <input type="radio" name="direct_address_type" value="home" checked style="accent-color: #00d2ff;">
+                                                <span>🏠 Home</span>
+                                            </label>
+                                            <label style="display: flex; align-items: center; gap: 6px; color: #cbd5e1; cursor: pointer; font-size: 0.9rem;">
+                                                <input type="radio" name="direct_address_type" value="work" style="accent-color: #00d2ff;">
+                                                <span>🏢 Work</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- 2. Payment Method -->
+                        <div class="checkout-section-box">
+                            <div class="checkout-section-title">
+                                <span>2. Select Payment Method</span>
+                            </div>
+                            <div class="payment-options-grid">
+                                <label class="payment-option-label">
+                                    <input type="radio" name="payment_method" value="upi" checked>
+                                    <div>
+                                        <div style="font-weight: 700;">UPI / QR (Instant &amp; Free)</div>
+                                        <div style="font-size: 0.82rem; color: #94a3b8;">Google Pay, PhonePe, Paytm, BHIM</div>
+                                    </div>
+                                </label>
+                                <label class="payment-option-label">
+                                    <input type="radio" name="payment_method" value="card">
+                                    <div>
+                                        <div style="font-weight: 700;">Credit / Debit Card</div>
+                                        <div style="font-size: 0.82rem; color: #94a3b8;">Visa, MasterCard, RuPay, American Express</div>
+                                    </div>
+                                </label>
+                                <label class="payment-option-label">
+                                    <input type="radio" name="payment_method" value="netbanking">
+                                    <div>
+                                        <div style="font-weight: 700;">Net Banking</div>
+                                        <div style="font-size: 0.82rem; color: #94a3b8;">All Indian Banks (HDFC, SBI, ICICI, Axis)</div>
+                                    </div>
+                                </label>
+                                <label class="payment-option-label">
+                                    <input type="radio" name="payment_method" value="wallet">
+                                    <div>
+                                        <div style="font-weight: 700;">Digital Wallets</div>
+                                        <div style="font-size: 0.82rem; color: #94a3b8;">Mobikwik, Freecharge, Airtel Money, Ola Money</div>
+                                    </div>
+                                </label>
+                                <label class="payment-option-label">
+                                    <input type="radio" name="payment_method" value="cod">
+                                    <div>
+                                        <div style="font-weight: 700;">Cash on Delivery (COD)</div>
+                                        <div style="font-size: 0.82rem; color: #94a3b8;">Pay upon doorstep delivery</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 3. Review Items -->
+                        <div class="checkout-section-box">
+                            <div class="checkout-section-title">
+                                <span>3. Order Items Review</span>
+                            </div>
+                            {% for item in items %}
+                                <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06);">
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        {% if item.product.product_image %}
+                                            <img src="{{ item.product.product_image.url }}" alt="{{ item.product.product_name }}" style="width: 50px; height: 50px; object-fit: contain; border-radius: 8px; background: #10121a;">
+                                        {% else %}
+                                            <img src="{% static 'images/placeholder-hardware.png' %}" alt="{{ item.product.product_name }}" style="width: 50px; height: 50px; object-fit: contain; border-radius: 8px; background: #10121a;">
+                                        {% endif %}
+                                        <div>
+                                            <div style="color: #fff; font-weight: 600; font-size: 0.95rem;">{{ item.product.product_name }}</div>
+                                            <div style="color: #94a3b8; font-size: 0.82rem;">Qty: {{ item.quantity }} &times; ₹{{ item.product.product_price }}</div>
+                                        </div>
+                                    </div>
+                                    <div style="font-weight: 700; color: #00d2ff;">
+                                        ₹{{ item.get_subtotal|floatformat:2 }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+
+                    <!-- Right Column: Order Summary -->
+                    <div class="cart-summary-card" style="height: fit-content;">
+                        <h2 class="summary-title">Payment Summary</h2>
+
+                        <div class="summary-rows">
+                            <div class="summary-row">
+                                <span>Items Subtotal</span>
+                                <span>₹{{ subtotal|floatformat:2 }}</span>
+                            </div>
+                            <div class="summary-row free-shipping">
+                                <span>Express Insured Shipping</span>
+                                <span>FREE</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>GST (Included)</span>
+                                <span>18%</span>
+                            </div>
+
+                            <div class="summary-divider"></div>
+
+                            <div class="summary-row total-row">
+                                <span>Grand Total</span>
+                                <span style="color: #00d2ff;">₹{{ total|floatformat:2 }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Place Order Button -->
+                        <button type="submit" class="btn-checkout" style="border: none; width: 100%; cursor: pointer;">
+                            <span>Place Order &bull; ₹{{ total|floatformat:2 }}</span>
+                        </button>
+
+                        <!-- Trust Badges -->
+                        <div class="trust-badges" style="margin-top: 24px;">
+                            <div class="trust-item">
+                                🛡️ <span>100% Genuine Brand Warranty</span>
+                            </div>
+                            <div class="trust-item">
+                                ⚡ <span>256-bit Encrypted Checkout</span>
+                            </div>
+                            <div class="trust-item">
+                                🔄 <span>7-Day Replacement Guarantee</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </form>
+
+        {% else %}
+            <!-- Cart Empty -->
+            <div class="cart-empty">
+                <div class="cart-empty-icon">🛒</div>
+                <h2 class="cart-empty-title">Your Cart is Empty</h2>
+                <p class="cart-empty-desc">
+                    There are no items in your cart to checkout. Browse our graphics cards, CPUs, and PC components!
+                </p>
+                <a href="{% url 'home' %}" class="btn-explore-shop">
+                    <span>⚡ Explore Products</span>
+                </a>
+            </div>
+        {% endif %}
+
+    </div>
+</section>
+
+<!-- Basic JavaScript to link State & City choices on Checkout -->
+<script>
+    const checkoutStateCities = {{ states_and_cities_json|safe }};
+    const directState = document.getElementById('direct_state_select');
+    const directCity = document.getElementById('direct_city_select');
+    const directOtherBox = document.getElementById('direct_other_city_box');
+    const directCustomCity = document.getElementById('direct_custom_city');
+    const directContainer = document.getElementById('direct_address_container');
+    const toggleBtn = document.getElementById('toggle_direct_btn');
+
+    // Toggle direct address box
+    function toggleDirectForm() {
+        if (!directContainer) return;
+        if (directContainer.style.display === 'none' || directContainer.style.display === '') {
+            directContainer.style.display = 'block';
+            if (toggleBtn) toggleBtn.textContent = '✕ Close New Address Form';
+            const houseInput = document.getElementById('direct_house_no');
+            if (houseInput) houseInput.focus();
+        } else {
+            directContainer.style.display = 'none';
+            if (toggleBtn) toggleBtn.textContent = '+ Add New Address Directly Here';
+        }
+    }
+
+    // Populate cities dropdown when state is changed
+    if (directState && directCity) {
+        directState.addEventListener('change', function() {
+            const state = this.value;
+            directCity.innerHTML = '<option value="">-- Select City --</option>';
+            if (directOtherBox) directOtherBox.style.display = 'none';
+            if (directCustomCity) directCustomCity.value = '';
+
+            if (state && checkoutStateCities[state]) {
+                const cities = checkoutStateCities[state];
+                for (let i = 0; i < cities.length; i++) {
+                    const opt = document.createElement('option');
+                    opt.value = cities[i];
+                    opt.textContent = cities[i];
+                    directCity.appendChild(opt);
+                }
+            }
+        });
+
+        directCity.addEventListener('change', function() {
+            if (this.value === 'Other') {
+                if (directOtherBox) {
+                    directOtherBox.style.display = 'block';
+                    if (directCustomCity) directCustomCity.focus();
+                }
+            } else {
+                if (directOtherBox) directOtherBox.style.display = 'none';
+            }
+        });
+    }
+
+    // Handle 'Other' custom city before form submit
+    const checkoutForm = document.getElementById('checkout_form');
+    if (checkoutForm && directCity) {
+        checkoutForm.addEventListener('submit', function() {
+            if (directCity.value === 'Other' && directCustomCity && directCustomCity.value.trim() !== '') {
+                directCity.options[directCity.selectedIndex].value = directCustomCity.value.trim();
+            }
+        });
+    }
+</script>
+{% endblock content %}

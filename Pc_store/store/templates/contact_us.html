@@ -1,0 +1,279 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}Enquire / Contact Us | NEXORIG{% endblock title %}
+
+{% block extra_css %}
+<style>
+    .enquiry-page-section {
+        padding: 50px 0 80px 0;
+        min-height: 75vh;
+    }
+    .enquiry-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    .enquiry-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .enquiry-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(0, 210, 255, 0.1);
+        border: 1px solid rgba(0, 210, 255, 0.25);
+        color: #00d2ff;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 14px;
+    }
+    .enquiry-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 2.3rem;
+        font-weight: 800;
+        color: #ffffff;
+        margin-bottom: 10px;
+    }
+    .enquiry-subtitle {
+        color: #94a3b8;
+        font-size: 1.05rem;
+        max-width: 650px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+    .enquiry-grid {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 30px;
+        align-items: start;
+    }
+    @media (max-width: 900px) {
+        .enquiry-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    .enquiry-card {
+        background: #141724;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 35px 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    .enquiry-field {
+        margin-bottom: 20px;
+    }
+    .enquiry-label {
+        display: block;
+        color: #cbd5e1;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+    .enquiry-input, .enquiry-select, .enquiry-textarea {
+        width: 100%;
+        background: #0f121d;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 8px;
+        color: #ffffff;
+        padding: 12px 14px;
+        font-size: 0.95rem;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        box-sizing: border-box;
+        font-family: inherit;
+    }
+    .enquiry-input:focus, .enquiry-select:focus, .enquiry-textarea:focus {
+        border-color: #00d2ff;
+        box-shadow: 0 0 12px rgba(0, 210, 255, 0.2);
+    }
+    .enquiry-textarea {
+        resize: vertical;
+        min-height: 130px;
+    }
+    .btn-submit-enquiry {
+        width: 100%;
+        background: linear-gradient(135deg, #00d2ff 0%, #0070f3 100%);
+        color: #000000;
+        border: none;
+        padding: 14px 20px;
+        border-radius: 8px;
+        font-size: 1.05rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-submit-enquiry:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 210, 255, 0.35);
+    }
+    .enquiry-side-box {
+        background: #10121a;
+        border: 1px solid rgba(0, 210, 255, 0.2);
+        border-radius: 16px;
+        padding: 28px 24px;
+    }
+    .side-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+    .side-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background: rgba(0, 210, 255, 0.1);
+        border: 1px solid rgba(0, 210, 255, 0.25);
+        color: #00d2ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+    .side-title {
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 0.95rem;
+        margin-bottom: 4px;
+    }
+    .side-desc {
+        color: #94a3b8;
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<section class="enquiry-page-section">
+    <div class="enquiry-container">
+
+        <!-- Header -->
+        <div class="enquiry-header">
+            <span class="enquiry-badge">💬 Direct Hardware Consultation</span>
+            <h1 class="enquiry-title">Customer Enquiries &amp; Support</h1>
+            <p class="enquiry-subtitle">
+                Have questions about component compatibility, custom PC builds, bulk quotes, or order status? Send us an enquiry and our team will get back to you promptly.
+            </p>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {{ message.tags }} my-3" role="alert" style="max-width: 900px; margin: 0 auto 24px auto;">
+                    <strong>{{ message }}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Form and Sidebar Grid -->
+        <div class="enquiry-grid">
+
+            <!-- Enquiry Form -->
+            <div class="enquiry-card">
+                <form method="POST" action="{% url 'contact_us' %}">
+                    {% csrf_token %}
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="enquiry-field">
+                            <label class="enquiry-label">Your Name *</label>
+                            <input type="text" name="name" class="enquiry-input" placeholder="e.g. John Doe" value="{{ default_name }}" required>
+                        </div>
+                        <div class="enquiry-field">
+                            <label class="enquiry-label">Email Address *</label>
+                            <input type="email" name="email" class="enquiry-input" placeholder="e.g. john@example.com" value="{{ default_email }}" required>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="enquiry-field">
+                            <label class="enquiry-label">Phone Number (Optional)</label>
+                            <input type="tel" name="phone" class="enquiry-input" placeholder="10-digit mobile number">
+                        </div>
+                        <div class="enquiry-field">
+                            <label class="enquiry-label">Enquiry Topic / Subject *</label>
+                            <select name="subject" class="enquiry-select" required>
+                                <option value="">-- Select Subject --</option>
+                                <option value="Custom Gaming PC Build Quote">Custom Gaming PC Build Quote</option>
+                                <option value="Component Compatibility Check">Component Compatibility Check</option>
+                                <option value="Product Stock &amp; Availability">Product Stock &amp; Availability</option>
+                                <option value="Order Status &amp; Tracking">Order Status &amp; Tracking</option>
+                                <option value="Warranty &amp; Replacement Support">Warranty &amp; Replacement Support</option>
+                                <option value="Bulk / Enterprise Procurement">Bulk / Enterprise Procurement</option>
+                                <option value="Other Query">Other Query</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="enquiry-field">
+                        <label class="enquiry-label">Detailed Message *</label>
+                        <textarea name="message" class="enquiry-textarea" placeholder="Describe the specifications you need, parts you are looking for, or any question..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-submit-enquiry">
+                        🚀 Submit Enquiry
+                    </button>
+                </form>
+            </div>
+
+            <!-- Sidebar Info -->
+            <div>
+                <div class="enquiry-side-box">
+                    <h3 style="color: #00d2ff; font-size: 1.15rem; margin-top: 0; margin-bottom: 20px; font-weight: 700;">
+                        Why Reach Out To Us?
+                    </h3>
+
+                    <div class="side-item">
+                        <div class="side-icon">⚡</div>
+                        <div>
+                            <div class="side-title">Hardware Specialists</div>
+                            <div class="side-desc">Get bottleneck-free configuration advice from custom PC builders.</div>
+                        </div>
+                    </div>
+
+                    <div class="side-item">
+                        <div class="side-icon">✉️</div>
+                        <div>
+                            <div class="side-title">Dedicated Support Email</div>
+                            <div class="side-desc">jagguuopp@gmail.com monitored 7 days a week.</div>
+                        </div>
+                    </div>
+
+                    <div class="side-item">
+                        <div class="side-icon">🛡️</div>
+                        <div>
+                            <div class="side-title">100% Genuine Components</div>
+                            <div class="side-desc">All inquiries get verified stock pricing and manufacturer warranty details.</div>
+                        </div>
+                    </div>
+
+                    <div class="side-item" style="margin-bottom: 0;">
+                        <div class="side-icon">⏱️</div>
+                        <div>
+                            <div class="side-title">Fast Response Time</div>
+                            <div class="side-desc">We typically reply within 2 to 4 business hours.</div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if request.user.is_staff or request.user.is_superuser %}
+                    <div style="margin-top: 20px; text-align: center;">
+                        <a href="{% url 'admin_dashboard' %}" style="display: block; background: rgba(0, 210, 255, 0.1); border: 1px solid rgba(0, 210, 255, 0.3); color: #00d2ff; padding: 12px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 0.92rem;">
+                            ⚡ Go to Admin Dashboard &rarr;
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+
+        </div>
+
+    </div>
+</section>
+{% endblock content %}

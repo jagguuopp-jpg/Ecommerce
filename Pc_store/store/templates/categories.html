@@ -1,0 +1,222 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}Shop PC Components by Category &bull; NEXORIG{% endblock title %}
+
+{% block extra_css %}
+<style>
+    .categories-page-section {
+        padding: 50px 0 90px 0;
+        min-height: 85vh;
+        background: radial-gradient(circle at 50% 10%, rgba(0, 210, 255, 0.05) 0%, transparent 60%);
+    }
+    .categories-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    .categories-page-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .cat-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(0, 210, 255, 0.12);
+        border: 1px solid rgba(0, 210, 255, 0.3);
+        color: #00d2ff;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 12px;
+    }
+    .cat-page-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 2.4rem;
+        font-weight: 800;
+        color: #ffffff;
+        margin: 0 0 10px 0;
+    }
+    .cat-page-title span {
+        background: linear-gradient(135deg, #00d2ff, #00e676);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .cat-page-subtitle {
+        color: #94a3b8;
+        font-size: 1rem;
+        max-width: 650px;
+        margin: 0 auto;
+        line-height: 1.5;
+    }
+
+    /* Category Cards Grid */
+    .cat-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+        gap: 22px;
+    }
+    .cat-card-item {
+        background: #141724;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 24px 22px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: all 0.25s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .cat-card-item:hover {
+        transform: translateY(-5px);
+        border-color: rgba(0, 210, 255, 0.4);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 210, 255, 0.12);
+    }
+    .cat-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 18px;
+    }
+    .cat-card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: rgba(0, 210, 255, 0.1);
+        border: 1px solid rgba(0, 210, 255, 0.25);
+        color: #00d2ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+    .cat-card-count {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #94a3b8;
+        background: rgba(255, 255, 255, 0.06);
+        padding: 4px 10px;
+        border-radius: 20px;
+    }
+    .cat-card-name {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin: 0 0 8px 0;
+    }
+    .cat-card-desc {
+        color: #94a3b8;
+        font-size: 0.88rem;
+        line-height: 1.45;
+        margin: 0 0 20px 0;
+        flex-grow: 1;
+    }
+    .cat-card-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #00d2ff;
+        font-weight: 700;
+        font-size: 0.92rem;
+        text-decoration: none;
+        transition: gap 0.2s, color 0.2s;
+    }
+    .cat-card-btn:hover {
+        gap: 10px;
+        color: #00e676;
+    }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<section class="categories-page-section">
+    <div class="categories-container">
+
+        <!-- Header -->
+        <div class="categories-page-header">
+            <span class="cat-badge">⚡ PC Hardware Catalog</span>
+            <h1 class="cat-page-title">Shop by <span>Category</span></h1>
+            <p class="cat-page-subtitle">
+                Find genuine high-performance computer parts from authorized distributors with official warranty and express delivery across India.
+            </p>
+        </div>
+
+        <!-- Categories Grid -->
+        <div class="cat-cards-grid">
+            {% for c in categories %}
+                <div class="cat-card-item">
+                    <div>
+                        <div class="cat-card-top">
+                            <div class="cat-card-icon">
+                                {% if 'Processor' in c.category_name %}⚡
+                                {% elif 'Graphics' in c.category_name %}🎮
+                                {% elif 'Motherboard' in c.category_name %}🔲
+                                {% elif 'Memory' in c.category_name %}🧠
+                                {% elif 'Storage' in c.category_name %}💾
+                                {% elif 'Power' in c.category_name %}🔌
+                                {% elif 'Cabinet' in c.category_name %}🖥️
+                                {% elif 'Cooler' in c.category_name %}❄️
+                                {% elif 'Monitor' in c.category_name %}🎧
+                                {% elif 'Custom' in c.category_name %}🛠️
+                                {% else %}⚡{% endif %}
+                            </div>
+                            <span class="cat-card-count">
+                                {% if c.category_slug == 'custom-pc-build-parts' %}
+                                    Build Studio
+                                {% else %}
+                                    {{ c.product_set.count }} Item{{ c.product_set.count|pluralize }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        <h2 class="cat-card-name">{{ c.category_name }}</h2>
+                        <p class="cat-card-desc">
+                            {% if 'Processor' in c.category_name %}
+                                Flagship AMD Ryzen & Intel Core desktop processors with extreme multi-core speeds.
+                            {% elif 'Graphics' in c.category_name %}
+                                NVIDIA GeForce RTX 40-series and AMD Radeon RX GPUs for 4K ray-traced gaming.
+                            {% elif 'Motherboard' in c.category_name %}
+                                Top-grade AM5 and LGA1700 motherboards with PCIe 5.0, Wi-Fi 6E/7, and robust VRMs.
+                            {% elif 'Memory' in c.category_name %}
+                                Ultra-fast DDR5 gaming RAM kits with AMD EXPO, Intel XMP 3.0, and dynamic RGB bars.
+                            {% elif 'Storage' in c.category_name %}
+                                Blazing PCIe Gen4/Gen5 NVMe M.2 solid-state drives with up to 7,450 MB/s read speeds.
+                            {% elif 'Power' in c.category_name %}
+                                80 PLUS Gold and Bronze fully modular power supplies with native ATX 3.0 support.
+                            {% elif 'Cabinet' in c.category_name %}
+                                Panoramic tempered glass, dual-chamber, and mesh airflow PC chassis and towers.
+                            {% elif 'Cooler' in c.category_name %}
+                                High-performance 360mm AIO liquid coolers and digital dual-tower air heatsinks.
+                            {% elif 'Monitor' in c.category_name %}
+                                High-refresh 240Hz OLED gaming monitors, optical mice, and mechanical keyboards.
+                            {% elif 'Custom' in c.category_name %}
+                                Interactive PC building studio to configure and purchase complete gaming rigs.
+                            {% else %}
+                                Premium computer hardware and components with full official warranty.
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <div>
+                        {% if c.category_slug == 'custom-pc-build-parts' %}
+                            <a href="{% url 'custom_pc_build' %}" class="cat-card-btn" style="color: #00e676;">
+                                Open PC Builder <span>&rarr;</span>
+                            </a>
+                        {% else %}
+                            <a href="/?category={{ c.category_slug }}#products" class="cat-card-btn">
+                                Explore {{ c.category_name }} <span>&rarr;</span>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+{% endblock content %}

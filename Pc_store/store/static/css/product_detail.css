@@ -1,0 +1,342 @@
+/* ==========================================================================
+   Product Detail Page Stylesheet
+   Theme: Dark RGB Gaming & Next-Gen PC Tech Aesthetic
+   ========================================================================== */
+
+.product-detail-section {
+    padding: 40px 0 80px 0;
+    min-height: 80vh;
+}
+
+.detail-breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: var(--text-dim, #64748b);
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.detail-breadcrumbs a {
+    color: var(--primary-blue, #00d2ff);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.detail-breadcrumbs a:hover {
+    color: #fff;
+}
+
+.product-detail-layout {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 48px;
+    align-items: start;
+    margin-bottom: 60px;
+}
+
+/* Gallery & Image Card */
+.product-gallery-card {
+    background: var(--bg-card, #141724);
+    border: 1px solid var(--border-highlight, rgba(0, 210, 255, 0.25));
+    border-radius: 16px;
+    padding: 36px;
+    position: sticky;
+    top: 90px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 210, 255, 0.15);
+}
+
+.product-image-container {
+    width: 100%;
+    height: 440px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--bg-surface, #10121a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.product-image-container img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    padding: 16px;
+    transition: transform 0.4s ease;
+}
+
+.product-image-container:hover img {
+    transform: scale(1.04);
+}
+
+.gallery-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: linear-gradient(135deg, #ff007f 0%, #9d4edd 100%);
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 6px 14px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(255, 0, 127, 0.4);
+}
+
+/* Product Info Section */
+.product-info-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-meta-category {
+    display: inline-block;
+    color: var(--primary-blue, #00d2ff);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.product-main-title {
+    font-family: var(--font-heading, 'Outfit', sans-serif);
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--text-white, #ffffff);
+    line-height: 1.25;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+}
+
+.product-rating-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+}
+
+.rating-stars {
+    color: #ffb703;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+}
+
+.rating-score {
+    color: var(--text-white, #fff);
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.rating-reviews {
+    color: var(--text-dim, #64748b);
+    font-size: 0.88rem;
+}
+
+/* Price Box */
+.product-price-container {
+    background: var(--bg-surface, #10121a);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+    border-radius: 12px;
+    padding: 22px 26px;
+    margin-bottom: 26px;
+}
+
+.current-price-tag {
+    font-family: var(--font-heading, 'Outfit', sans-serif);
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: var(--primary-blue, #00d2ff);
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+}
+
+.price-tax-note {
+    font-size: 0.85rem;
+    color: var(--text-dim, #64748b);
+    font-weight: 400;
+}
+
+/* Stock Status */
+.stock-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.84rem;
+    font-weight: 700;
+    margin-top: 12px;
+}
+
+.stock-in {
+    background: rgba(0, 230, 118, 0.12);
+    color: #00e676;
+    border: 1px solid rgba(0, 230, 118, 0.3);
+}
+
+.stock-out {
+    background: rgba(255, 0, 127, 0.12);
+    color: #ff007f;
+    border: 1px solid rgba(255, 0, 127, 0.3);
+}
+
+.stock-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+/* Short Description */
+.product-description-preview {
+    font-size: 1rem;
+    color: var(--text-light, #e2e8f0);
+    line-height: 1.7;
+    margin-bottom: 28px;
+}
+
+/* Purchase Actions */
+.product-action-box {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+}
+
+.btn-buy-now {
+    flex: 1;
+    min-width: 180px;
+    background: linear-gradient(135deg, #00d2ff 0%, #9d4edd 100%);
+    color: #0a0b10;
+    font-weight: 800;
+    border: none;
+    border-radius: 8px;
+    padding: 16px 28px;
+    font-size: 1.05rem;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 210, 255, 0.35);
+}
+
+.btn-buy-now:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 210, 255, 0.5);
+    color: #000;
+}
+
+.btn-add-cart {
+    flex: 1;
+    min-width: 180px;
+    background: transparent;
+    border: 2px solid var(--primary-blue, #00d2ff);
+    color: var(--primary-blue, #00d2ff);
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 16px 28px;
+    font-size: 1.05rem;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-add-cart:hover {
+    background: rgba(0, 210, 255, 0.12);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+/* Assurance Badges Grid */
+.assurance-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+}
+
+.assurance-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg-surface, #10121a);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: var(--text-light, #e2e8f0);
+}
+
+.assurance-icon {
+    font-size: 1.25rem;
+}
+
+/* Specifications Card */
+.specs-panel-card {
+    background: var(--bg-card, #141724);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+    border-radius: 16px;
+    padding: 36px;
+    margin-top: 40px;
+}
+
+.specs-title {
+    font-family: var(--font-heading, 'Outfit', sans-serif);
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-white, #fff);
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+}
+
+.specs-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.specs-table tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.specs-table tr:last-child {
+    border-bottom: none;
+}
+
+.specs-table th {
+    text-align: left;
+    padding: 14px 18px;
+    color: var(--text-dim, #64748b);
+    font-size: 0.92rem;
+    font-weight: 600;
+    width: 35%;
+}
+
+.specs-table td {
+    padding: 14px 18px;
+    color: var(--text-white, #fff);
+    font-size: 0.95rem;
+}
+
+@media (max-width: 992px) {
+    .product-detail-layout {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+    .product-gallery-card {
+        position: static;
+    }
+    .product-image-container {
+        height: 340px;
+    }
+}

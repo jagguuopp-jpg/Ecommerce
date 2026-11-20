@@ -1,0 +1,47 @@
+from django.urls import path
+from store import views
+from store.views import *
+
+
+urlpatterns = [
+    path('', home, name='home'),
+    path('product/<slug:pslug>/', get_product_detail, name='product_detail'),
+    path('product_detail/', get_product_detail),
+    path('login/', login, name='login'),
+    path('register/', register, name='register'),
+    path('create-account/', register, name='create_account'),
+    path('logout/', logout, name='logout'),
+    path('favourites/', favourites, name='favourites'),
+    path('wishlist/', favourites, name='wishlist'),
+    path('toggle-wishlist/<int:product_id>/', toggle_wishlist, name='toggle_wishlist'),
+    path('toggle-favourite/<int:product_id>/', toggle_wishlist, name='toggle_favourite'),
+    path('cart/', cart, name='cart'),
+    path('add-to-cart/<int:product_id>/', add_to_cart, name='add_to_cart'),
+    path('buy-now/<int:product_id>/', buy_now, name='buy_now'),
+    path('remove-from-cart/<int:product_id>/', remove_from_cart, name='remove_from_cart'),
+    path('update-cart-quantity/<int:product_id>/<str:action>/', update_cart_quantity, name='update_cart_quantity'),
+    path('checkout/', checkout, name='checkout'),
+    path('process-checkout/', process_checkout, name='process_checkout'),
+    path('order-success/<int:order_id>/', order_success, name='order_success'),
+    path('my-orders/', my_orders, name='my_orders'),
+    path('orders/', my_orders, name='orders'),
+    path('cancel-order/<int:order_id>/', cancel_order, name='cancel_order'),
+    path('exchange-order/<int:order_id>/', exchange_order, name='exchange_order'),
+    path('addresses/', addresses, name='addresses'),
+    path('remove-address/<int:address_id>/', remove_address, name='remove_address'),
+    path('add-address/', add_address, name='add_address'),
+    path('add_address/', add_address),
+    path('payment-callback/', views.payment_callback, name='payment_callback'),
+    path('admin-dashboard/', admin_dashboard, name='admin_dashboard'),
+    path('contact-us/', contact_us, name='contact_us'),
+    path('enquiry/', contact_us, name='enquiry'),
+    path('enquire/', contact_us, name='enquire'),
+    path('update-enquiry-status/<int:enquiry_id>/', update_enquiry_status, name='update_enquiry_status'),
+    path('custom-pc-build/', custom_pc_build, name='custom_pc_build'),
+    path('pc-builder/', custom_pc_build, name='pc_builder'),
+    path('add-custom-build-to-cart/', add_custom_build_to_cart, name='add_custom_build_to_cart'),
+    path('categories/', categories_view, name='categories'),
+    path('api/ai-parts/', views.ai_parts_chat, name='ai_parts_chat'),
+    path('api/ai-stylist/', views.ai_parts_chat, name='ai_stylist'),
+]
+    

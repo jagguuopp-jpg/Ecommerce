@@ -1,0 +1,525 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}My Orders | NEXORIG - Premium Hardware Store{% endblock title %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}?v=4.0">
+    <style>
+        .orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            margin-top: 24px;
+        }
+        .order-card {
+            background: #141724;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.25s ease;
+        }
+        .order-card:hover {
+            border-color: rgba(0, 210, 255, 0.4);
+            box-shadow: 0 4px 20px rgba(0, 210, 255, 0.08);
+        }
+        .order-card-header {
+            background: #10121a;
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .order-meta-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0 0 4px 0;
+            font-family: 'Outfit', sans-serif;
+        }
+        .order-meta-date {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+        .order-badges {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .badge-status {
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-confirmed {
+            background: rgba(0, 230, 118, 0.15);
+            color: #00e676;
+            border: 1px solid rgba(0, 230, 118, 0.3);
+        }
+        .badge-delivered {
+            background: rgba(0, 210, 255, 0.15);
+            color: #00d2ff;
+            border: 1px solid rgba(0, 210, 255, 0.3);
+        }
+        .badge-processing {
+            background: rgba(255, 171, 0, 0.15);
+            color: #ffab00;
+            border: 1px solid rgba(255, 171, 0, 0.3);
+        }
+        .badge-cancelled {
+            background: rgba(255, 77, 77, 0.15);
+            color: #ff5252;
+            border: 1px solid rgba(255, 77, 77, 0.3);
+        }
+        .badge-exchange {
+            background: rgba(255, 171, 0, 0.15);
+            color: #ffab00;
+            border: 1px solid rgba(255, 171, 0, 0.3);
+        }
+        .badge-payment {
+            background: rgba(255, 255, 255, 0.06);
+            color: #cbd5e1;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+        .order-items-container {
+            padding: 20px 24px;
+        }
+        .order-item-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            gap: 16px;
+        }
+        .order-item-row:last-child {
+            border-bottom: none;
+        }
+        .order-item-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .order-item-thumb {
+            width: 54px;
+            height: 54px;
+            border-radius: 8px;
+            object-fit: contain;
+            background: #10121a;
+            padding: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .order-item-name {
+            font-size: 0.98rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+        .order-item-qty {
+            font-size: 0.82rem;
+            color: #94a3b8;
+        }
+        .order-item-price {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #00d2ff;
+            white-space: nowrap;
+        }
+        .order-card-footer {
+            background: #10121a;
+            padding: 18px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .footer-summary-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+        .order-shipping-preview {
+            font-size: 0.88rem;
+            color: #94a3b8;
+            max-width: 60%;
+            line-height: 1.4;
+        }
+        .order-total-block {
+            text-align: right;
+        }
+        .order-total-label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+        .order-total-val {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #00d2ff;
+            font-family: 'Outfit', sans-serif;
+        }
+        .btn-action-cancel {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: rgba(255, 77, 77, 0.1);
+            color: #ff5252;
+            border: 1px solid rgba(255, 77, 77, 0.3);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-action-cancel:hover {
+            background: rgba(255, 77, 77, 0.22);
+            border-color: #ff5252;
+        }
+        .btn-action-exchange {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: rgba(0, 210, 255, 0.1);
+            color: #00d2ff;
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-action-exchange:hover {
+            background: rgba(0, 210, 255, 0.22);
+            border-color: #00d2ff;
+        }
+        .action-form-panel {
+            background: #0d0f17;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-top: 10px;
+        }
+        .action-form-select {
+            width: 100%;
+            padding: 10px 14px;
+            background: #141724;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 0.92rem;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+        .action-form-select:focus {
+            border-color: #00d2ff;
+        }
+        .action-form-select option {
+            background: #141724;
+            color: #ffffff;
+            padding: 8px;
+        }
+        .action-form-textarea {
+            width: 100%;
+            padding: 10px 14px;
+            background: #141724;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 0.92rem;
+            margin-top: 10px;
+            outline: none;
+            resize: vertical;
+            min-height: 70px;
+            font-family: inherit;
+        }
+        .action-form-textarea:focus {
+            border-color: #00d2ff;
+        }
+    </style>
+{% endblock extra_css %}
+
+{% block content %}
+<section class="cart-page-section">
+    <div class="cart-container">
+
+        <!-- Header -->
+        <div class="cart-header">
+            <div class="cart-title-wrap">
+                <div class="cart-icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="cart-title">My Orders</h1>
+                </div>
+                <span class="cart-count-pill">{{ orders|length }} Order{{ orders|length|pluralize }}</span>
+            </div>
+
+            <a href="{% url 'home' %}" class="btn btn-outline btn-sm">
+                ← Back to Shop
+            </a>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {{ message.tags }} my-3" role="alert">
+                    <strong>{{ message }}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Orders List -->
+        {% if orders %}
+            <div class="orders-list">
+                {% for order in orders %}
+                    <div class="order-card">
+
+                        <!-- Card Header -->
+                        <div class="order-card-header">
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                    <h3 class="order-meta-title">Order #{{ order.id }}</h3>
+                                    <span style="font-family: monospace; font-size: 0.78rem; background: rgba(0, 210, 255, 0.1); color: #00d2ff; padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(0, 210, 255, 0.25);" title="Order UUID">
+                                        UUID: {{ order.order_id }}
+                                    </span>
+                                </div>
+                                <div class="order-meta-date" style="margin-top: 4px;">Placed on {{ order.created_at|date:"d M Y, h:i A" }}</div>
+
+                                {% if order.razorpay_order_id or order.razorpay_payment_id %}
+                                    <div style="margin-top: 8px; font-size: 0.8rem; color: #94a3b8; display: flex; flex-wrap: wrap; gap: 12px; background: rgba(0, 210, 255, 0.05); padding: 6px 10px; border-radius: 6px; border: 1px solid rgba(0, 210, 255, 0.15);">
+                                        {% if order.razorpay_order_id %}
+                                            <span><strong>Razorpay Order ID:</strong> <code style="color: #00d2ff;">{{ order.razorpay_order_id }}</code></span>
+                                        {% endif %}
+                                        {% if order.razorpay_payment_id %}
+                                            <span><strong>Payment ID:</strong> <code style="color: #00e676;">{{ order.razorpay_payment_id }}</code></span>
+                                        {% endif %}
+                                        {% if order.razorpay_signature %}
+                                            <span title="{{ order.razorpay_signature }}"><strong>Signature:</strong> <code style="color: #cbd5e1;">{{ order.razorpay_signature|slice:":16" }}...</code></span>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="order-badges">
+                                <span class="badge-status {% if order.status == 'Confirmed' %}badge-confirmed{% elif order.status == 'Delivered' %}badge-delivered{% elif order.status == 'Cancelled' %}badge-cancelled{% elif order.status == 'Exchange Requested' %}badge-exchange{% else %}badge-processing{% endif %}">
+                                    {% if order.status == 'Confirmed' %}✓ Confirmed
+                                    {% elif order.status == 'Delivered' %}📦 Delivered
+                                    {% elif order.status == 'Cancelled' %}❌ Cancelled
+                                    {% elif order.status == 'Exchange Requested' %}🔄 Exchange Requested
+                                    {% else %}⏳ {{ order.status }}
+                                    {% endif %}
+                                </span>
+                                <span class="badge-payment">
+                                    💳 {{ order.payment_method }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Ordered Items -->
+                        <div class="order-items-container">
+                            {% for item in order.items.all %}
+                                <div class="order-item-row">
+                                    <div class="order-item-info">
+                                        {% if item.product.product_image %}
+                                            <img src="{{ item.product.product_image.url }}" alt="{{ item.product_name }}" class="order-item-thumb">
+                                        {% else %}
+                                            <img src="{% static 'images/placeholder-hardware.png' %}" alt="{{ item.product_name }}" class="order-item-thumb">
+                                        {% endif %}
+                                        <div>
+                                            <div class="order-item-name">{{ item.product_name }}</div>
+                                            <div class="order-item-qty">
+                                                Qty: {{ item.quantity }} &times; ₹{{ item.price|floatformat:2 }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="order-item-price">
+                                        ₹{{ item.get_subtotal|floatformat:2 }}
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div style="color: #94a3b8; font-size: 0.9rem;">
+                                    Hardware components bundle
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Card Footer -->
+                        <div class="order-card-footer">
+                            <div class="footer-summary-row">
+                                <div class="order-shipping-preview">
+                                    <span style="color: #cbd5e1; font-weight: 600;">📍 Delivery To:</span><br>
+                                    {{ order.shipping_address_text|default:"Customer Shipping Address" }}
+                                </div>
+                                <div class="order-total-block">
+                                    <div class="order-total-label">Grand Total</div>
+                                    <div class="order-total-val">₹{{ order.total_amount|floatformat:2 }}</div>
+                                </div>
+                            </div>
+
+                            <!-- Cancellation Reason Banner (If Cancelled) -->
+                            {% if order.status == 'Cancelled' %}
+                                <div style="padding: 10px 14px; background: rgba(255, 77, 77, 0.08); border-left: 3px solid #ff5252; border-radius: 4px; font-size: 0.88rem; color: #cbd5e1;">
+                                    <strong style="color: #ff5252;">Cancellation Reason:</strong> {{ order.cancellation_reason|default:"Cancelled upon customer request" }}
+                                </div>
+                            {% endif %}
+
+                            <!-- Exchange Reason Banner (If Exchange Requested) -->
+                            {% if order.status == 'Exchange Requested' %}
+                                <div style="padding: 10px 14px; background: rgba(0, 210, 255, 0.08); border-left: 3px solid #00d2ff; border-radius: 4px; font-size: 0.88rem; color: #cbd5e1;">
+                                    <strong style="color: #00d2ff;">Exchange Reason:</strong> {{ order.exchange_reason|default:"Exchange requested by customer" }}
+                                    <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 4px;">Our logistics team is reviewing your replacement request.</div>
+                                </div>
+                            {% endif %}
+
+                            <!-- Actions: Cancel and Exchange Buttons (If Order is Active) -->
+                            {% if order.status != 'Cancelled' and order.status != 'Exchange Requested' %}
+                                <div style="display: flex; gap: 12px; justify-content: flex-end; flex-wrap: wrap; padding-top: 8px; border-top: 1px solid rgba(255, 255, 255, 0.06);">
+                                    <button type="button" class="btn-action-cancel" onclick="toggleCancelForm('{{ order.id }}')">
+                                        <span>✕ Cancel Order</span>
+                                    </button>
+                                    <button type="button" class="btn-action-exchange" onclick="toggleExchangeForm('{{ order.id }}')">
+                                        <span>🔄 Request Exchange</span>
+                                    </button>
+                                </div>
+
+                                <!-- Inline Cancel Order Form -->
+                                <div id="cancel_panel_{{ order.id }}" class="action-form-panel" style="display: none; border-color: rgba(255, 77, 77, 0.4);">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <h4 style="color: #ff5252; margin: 0; font-size: 0.95rem; font-weight: 700;">Cancel Order #{{ order.id }}</h4>
+                                        <button type="button" onclick="toggleCancelForm('{{ order.id }}')" style="background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1.1rem;">✕</button>
+                                    </div>
+                                    <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 10px;">Please choose a reason for cancellation:</p>
+                                    <form method="POST" action="{% url 'cancel_order' order.id %}">
+                                        {% csrf_token %}
+                                        <select name="reason" id="cancel_select_{{ order.id }}" class="action-form-select" onchange="checkOtherReason('cancel', '{{ order.id }}')" required>
+                                            <option value="">-- Select Cancellation Reason --</option>
+                                            {% for r in cancel_reasons %}
+                                                <option value="{{ r }}">{{ r }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div id="cancel_custom_box_{{ order.id }}" style="display: none;">
+                                            <textarea name="custom_reason" id="cancel_custom_{{ order.id }}" class="action-form-textarea" placeholder="Please specify your cancellation reason..."></textarea>
+                                        </div>
+                                        <div style="display: flex; gap: 10px; margin-top: 12px;">
+                                            <button type="submit" class="btn-action-cancel" style="background: #ff5252; color: #fff; font-weight: 700;">
+                                                Confirm Cancellation
+                                            </button>
+                                            <button type="button" class="btn btn-outline btn-sm" onclick="toggleCancelForm('{{ order.id }}')">
+                                                Keep Order
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <!-- Inline Exchange Request Form -->
+                                <div id="exchange_panel_{{ order.id }}" class="action-form-panel" style="display: none; border-color: rgba(0, 210, 255, 0.4);">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <h4 style="color: #00d2ff; margin: 0; font-size: 0.95rem; font-weight: 700;">Request Exchange for Order #{{ order.id }}</h4>
+                                        <button type="button" onclick="toggleExchangeForm('{{ order.id }}')" style="background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1.1rem;">✕</button>
+                                    </div>
+                                    <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 10px;">Please choose a reason for exchange / replacement:</p>
+                                    <form method="POST" action="{% url 'exchange_order' order.id %}">
+                                        {% csrf_token %}
+                                        <select name="reason" id="exchange_select_{{ order.id }}" class="action-form-select" onchange="checkOtherReason('exchange', '{{ order.id }}')" required>
+                                            <option value="">-- Select Exchange Reason --</option>
+                                            {% for r in exchange_reasons %}
+                                                <option value="{{ r }}">{{ r }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div id="exchange_custom_box_{{ order.id }}" style="display: none;">
+                                            <textarea name="custom_reason" id="exchange_custom_{{ order.id }}" class="action-form-textarea" placeholder="Please describe the issue or the replacement hardware you need..."></textarea>
+                                        </div>
+                                        <div style="display: flex; gap: 10px; margin-top: 12px;">
+                                            <button type="submit" class="btn-action-exchange" style="background: #00d2ff; color: #000; font-weight: 700;">
+                                                Submit Exchange Request
+                                            </button>
+                                            <button type="button" class="btn btn-outline btn-sm" onclick="toggleExchangeForm('{{ order.id }}')">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+                {% endfor %}
+            </div>
+
+        {% else %}
+            <!-- No Orders State -->
+            <div style="text-align: center; padding: 60px 20px; background: #141724; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.08); margin-top: 24px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                <div style="font-size: 3.5rem; margin-bottom: 16px;">🛍️</div>
+                <h2 style="color: #fff; font-family: 'Outfit', sans-serif; font-size: 1.6rem; margin-bottom: 8px;">No Orders Placed Yet</h2>
+                <p style="color: #94a3b8; font-size: 0.95rem; margin-bottom: 24px; line-height: 1.6;">
+                    You have not placed any orders yet. Discover our latest GeForce RTX 40-Series GPUs, Intel Core CPUs, high-speed DDR5 RAM, and gaming hardware!
+                </p>
+                <a href="{% url 'home' %}" class="btn-explore-shop" style="text-decoration: none; padding: 12px 28px; border-radius: 8px;">
+                    <span>⚡ Explore Products</span>
+                </a>
+            </div>
+        {% endif %}
+
+    </div>
+</section>
+
+<!-- Basic JavaScript to toggle panels and show custom reason on 'Other' -->
+<script>
+    function toggleCancelForm(id) {
+        const cancelPanel = document.getElementById('cancel_panel_' + id);
+        const exchangePanel = document.getElementById('exchange_panel_' + id);
+        if (exchangePanel) exchangePanel.style.display = 'none';
+
+        if (cancelPanel) {
+            cancelPanel.style.display = (cancelPanel.style.display === 'none' || cancelPanel.style.display === '') ? 'block' : 'none';
+        }
+    }
+
+    function toggleExchangeForm(id) {
+        const exchangePanel = document.getElementById('exchange_panel_' + id);
+        const cancelPanel = document.getElementById('cancel_panel_' + id);
+        if (cancelPanel) cancelPanel.style.display = 'none';
+
+        if (exchangePanel) {
+            exchangePanel.style.display = (exchangePanel.style.display === 'none' || exchangePanel.style.display === '') ? 'block' : 'none';
+        }
+    }
+
+    function checkOtherReason(type, id) {
+        const selectEl = document.getElementById(type + '_select_' + id);
+        const customBox = document.getElementById(type + '_custom_box_' + id);
+        const customText = document.getElementById(type + '_custom_' + id);
+
+        if (selectEl && customBox && customText) {
+            if (selectEl.value === 'Other') {
+                customBox.style.display = 'block';
+                customText.required = true;
+                customText.focus();
+            } else {
+                customBox.style.display = 'none';
+                customText.required = false;
+                customText.value = '';
+            }
+        }
+    }
+</script>
+{% endblock content %}

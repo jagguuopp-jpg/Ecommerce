@@ -1,0 +1,778 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}Custom PC Builder &bull; Build Your Dream Rig | NEXORIG{% endblock title %}
+
+{% block extra_css %}
+<style>
+    .builder-section {
+        padding: 40px 0 90px 0;
+        min-height: 85vh;
+        background: radial-gradient(circle at 50% 10%, rgba(0, 210, 255, 0.05) 0%, transparent 60%);
+    }
+    .builder-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    .builder-header {
+        text-align: center;
+        margin-bottom: 28px;
+    }
+    .builder-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(0, 230, 118, 0.12);
+        border: 1px solid rgba(0, 230, 118, 0.3);
+        color: #00e676;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+    }
+    .builder-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 2.3rem;
+        font-weight: 800;
+        color: #ffffff;
+        margin: 0 0 10px 0;
+    }
+    .builder-subtitle {
+        color: #94a3b8;
+        font-size: 1rem;
+        max-width: 650px;
+        margin: 0 auto;
+        line-height: 1.5;
+    }
+
+    /* Sticky Summary Bar */
+    .build-summary-bar {
+        background: #141724;
+        border: 1px solid rgba(0, 210, 255, 0.35);
+        border-radius: 16px;
+        padding: 18px 24px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 210, 255, 0.1);
+        position: sticky;
+        top: 20px;
+        z-index: 100;
+        backdrop-filter: blur(12px);
+    }
+    .summary-left {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        flex-wrap: wrap;
+    }
+    .summary-counter {
+        display: flex;
+        flex-direction: column;
+    }
+    .summary-counter-label {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+    .summary-counter-val {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #00d2ff;
+    }
+    .summary-price-box {
+        display: flex;
+        flex-direction: column;
+    }
+    .summary-price-label {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+    .summary-price-val {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.65rem;
+        font-weight: 900;
+        color: #00e676;
+    }
+    .summary-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .btn-add-build {
+        background: linear-gradient(135deg, #00e676, #00b0ff);
+        color: #000000;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-add-build:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 230, 118, 0.4);
+    }
+    .btn-reset-build {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #94a3b8;
+        padding: 11px 16px;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .btn-reset-build:hover {
+        color: #ef4444;
+        border-color: #ef4444;
+    }
+
+    /* List View Container */
+    .builder-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    /* List View Row */
+    .builder-row {
+        background: #141724;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        padding: 16px 20px;
+        display: grid;
+        grid-template-columns: 88px 230px 1fr 140px;
+        align-items: center;
+        gap: 20px;
+        transition: all 0.25s ease;
+    }
+    .builder-row:hover {
+        border-color: rgba(0, 210, 255, 0.35);
+        background: #171b2b;
+    }
+    .builder-row.filled {
+        border-color: rgba(0, 230, 118, 0.4);
+        background: #121926;
+        box-shadow: 0 4px 20px rgba(0, 230, 118, 0.08);
+    }
+
+    /* Image Box */
+    .part-img-box {
+        width: 88px;
+        height: 88px;
+        background: #0b0e17;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        flex-shrink: 0;
+        transition: border-color 0.2s, transform 0.2s;
+    }
+    .builder-row.filled .part-img-box {
+        border-color: #00e676;
+        box-shadow: 0 0 12px rgba(0, 230, 118, 0.25);
+    }
+    .part-img-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.25s ease;
+    }
+    .builder-row:hover .part-img-box img {
+        transform: scale(1.05);
+    }
+
+    /* Part Info Column */
+    .part-info-col {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .part-slot-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .part-tag {
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .tag-req {
+        background: rgba(0, 210, 255, 0.15);
+        color: #00d2ff;
+        border: 1px solid rgba(0, 210, 255, 0.3);
+    }
+    .tag-opt {
+        background: rgba(255, 255, 255, 0.08);
+        color: #94a3b8;
+    }
+    .part-status-text {
+        font-size: 0.83rem;
+        color: #94a3b8;
+        line-height: 1.3;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 220px;
+    }
+    .builder-row.filled .part-status-text {
+        color: #00e676;
+        font-weight: 600;
+    }
+
+    /* Select Dropdown Column */
+    .part-select-col {
+        width: 100%;
+    }
+    .builder-select {
+        width: 100%;
+        background: #0b0e17;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 8px;
+        color: #ffffff;
+        padding: 12px 14px;
+        font-size: 0.92rem;
+        outline: none;
+        cursor: pointer;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        box-sizing: border-box;
+    }
+    .builder-select:focus {
+        border-color: #00d2ff;
+        box-shadow: 0 0 10px rgba(0, 210, 255, 0.25);
+    }
+    .builder-row.filled .builder-select {
+        border-color: rgba(0, 230, 118, 0.5);
+    }
+    .builder-select option {
+        background: #141724;
+        color: #ffffff;
+        padding: 8px;
+    }
+
+    /* Price & Clear Column */
+    .part-price-col {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+    .part-price-display {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #cbd5e1;
+        white-space: nowrap;
+        min-width: 90px;
+        text-align: right;
+    }
+    .builder-row.filled .part-price-display {
+        color: #00e676;
+    }
+    .btn-clear-slot {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: #94a3b8;
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: all 0.2s;
+        opacity: 0.4;
+    }
+    .builder-row.filled .btn-clear-slot {
+        opacity: 1;
+    }
+    .btn-clear-slot:hover {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        border-color: #ef4444;
+    }
+
+    /* Bottom Summary Card */
+    .bottom-summary-card {
+        margin-top: 35px;
+        background: #141724;
+        border: 1px solid rgba(0, 230, 118, 0.35);
+        border-radius: 16px;
+        padding: 24px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .bottom-summary-info h3 {
+        color: #ffffff;
+        font-size: 1.3rem;
+        font-weight: 800;
+        margin: 0 0 6px 0;
+    }
+    .bottom-summary-info p {
+        color: #94a3b8;
+        font-size: 0.92rem;
+        margin: 0;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+        .builder-row {
+            grid-template-columns: 75px 1fr;
+            grid-template-areas:
+                "img info"
+                "select select"
+                "price price";
+            gap: 12px;
+        }
+        .part-img-box {
+            grid-area: img;
+            width: 75px;
+            height: 75px;
+        }
+        .part-info-col {
+            grid-area: info;
+        }
+        .part-select-col {
+            grid-area: select;
+        }
+        .part-price-col {
+            grid-area: price;
+            justify-content: space-between;
+        }
+        .part-status-text {
+            max-width: 100%;
+        }
+    }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<section class="builder-section">
+    <div class="builder-container">
+
+        <!-- Header -->
+        <div class="builder-header">
+            <span class="builder-badge">⚡ Real-time Component Assembler</span>
+            <h1 class="builder-title">Custom PC Build Studio</h1>
+            <p class="builder-subtitle">
+                Configure your ultimate workstation or gaming rig. Select each component from our genuine inventory with live price calculation and instant cart checkout.
+            </p>
+        </div>
+
+        <!-- System Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {{ message.tags }} my-3" role="alert" style="max-width: 900px; margin: 0 auto 24px auto;">
+                    <strong>{{ message }}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Custom Build Form -->
+        <form method="POST" action="{% url 'add_custom_build_to_cart' %}" id="pc_build_form">
+            {% csrf_token %}
+
+            <!-- Sticky Build Summary Bar -->
+            <div class="build-summary-bar">
+                <div class="summary-left">
+                    <div class="summary-counter">
+                        <span class="summary-counter-label">Components</span>
+                        <span class="summary-counter-val"><span id="chosen_count">0</span> / 8 Selected</span>
+                    </div>
+
+                    <div style="width: 1px; height: 35px; background: rgba(255, 255, 255, 0.1);"></div>
+
+                    <div class="summary-price-box">
+                        <span class="summary-price-label">Estimated Build Total</span>
+                        <span class="summary-price-val" id="total_price_display">₹0.00</span>
+                    </div>
+                </div>
+
+                <div class="summary-actions">
+                    <button type="button" class="btn-reset-build" onclick="resetBuild()">
+                        🔄 Clear Build
+                    </button>
+                    <button type="submit" class="btn-add-build">
+                        🛒 Add Entire Build to Cart &rarr;
+                    </button>
+                </div>
+            </div>
+
+            <!-- List View of 8 Component Slots -->
+            <div class="builder-list">
+
+                <!-- 1. Processor (CPU) -->
+                <div class="builder-row" id="row_cpu">
+                    <div class="part-img-box">
+                        <img id="img_cpu" src="{% static 'images/parts/cpu.svg' %}" alt="Processor" data-default="{% static 'images/parts/cpu.svg' %}">
+                    </div>
+                    <div class="part-info-col">
+                        <h3 class="part-slot-title">
+                            1. Processor (CPU)
+                            <span class="part-tag tag-req">Required</span>
+                        </h3>
+                        <div class="part-status-text" id="status_cpu">No processor selected</div>
+                    </div>
+                    <div class="part-select-col">
+                        <select name="cpu" id="slot_cpu" class="builder-select" onchange="onSelectPart('cpu', this)">
+                            <option value="" data-price="0" data-name="" data-img="{% static 'images/parts/cpu.svg' %}">-- Select Processor --</option>
+                            {% for p in cpus %}
+                                <option value="{{ p.id }}" 
+                                        data-price="{{ p.product_price }}" 
+                                        data-name="{{ p.product_name }}"
+                                        data-img="{% if p.product_image %}{{ p.product_image.url }}{% else %}{% static 'images/parts/cpu.svg' %}{% endif %}">
+                                    {{ p.product_name }} &bull; ₹{{ p.product_price|floatformat:2 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="part-price-col">
+                        <span class="part-price-display" id="price_cpu">₹0.00</span>
+                        <button type="button" class="btn-clear-slot" onclick="clearSlot('cpu')" title="Clear selection">✕</button>
+                    </div>
+                </div>
+
+                <!-- 2. Motherboard -->
+                <div class="builder-row" id="row_motherboard">
+                    <div class="part-img-box">
+                        <img id="img_motherboard" src="{% static 'images/parts/motherboard.svg' %}" alt="Motherboard" data-default="{% static 'images/parts/motherboard.svg' %}">
+                    </div>
+                    <div class="part-info-col">
+                        <h3 class="part-slot-title">
+                            2. Motherboard
+                            <span class="part-tag tag-req">Required</span>
+                        </h3>
+                        <div class="part-status-text" id="status_motherboard">No motherboard selected</div>
+                    </div>
+                    <div class="part-select-col">
+                        <select name="motherboard" id="slot_motherboard" class="builder-select" onchange="onSelectPart('motherboard', this)">
+                            <option value="" data-price="0" data-name="" data-img="{% static 'images/parts/motherboard.svg' %}">-- Select Motherboard --</option>
+                            {% for p in motherboards %}
+                                <option value="{{ p.id }}" 
+                                        data-price="{{ p.product_price }}" 
+                                        data-name="{{ p.product_name }}"
+                                        data-img="{% if p.product_image %}{{ p.product_image.url }}{% else %}{% static 'images/parts/motherboard.svg' %}{% endif %}">
+                                    {{ p.product_name }} &bull; ₹{{ p.product_price|floatformat:2 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="part-price-col">
+                        <span class="part-price-display" id="price_motherboard">₹0.00</span>
+                        <button type="button" class="btn-clear-slot" onclick="clearSlot('motherboard')" title="Clear selection">✕</button>
+                    </div>
+                </div>
+
+                <!-- 3. Graphics Card (GPU) -->
+                <div class="builder-row" id="row_gpu">
+                    <div class="part-img-box">
+                        <img id="img_gpu" src="{% static 'images/parts/gpu.svg' %}" alt="Graphics Card" data-default="{% static 'images/parts/gpu.svg' %}">
+                    </div>
+                    <div class="part-info-col">
+                        <h3 class="part-slot-title">
+                            3. Graphics Card (GPU)
+                            <span class="part-tag tag-req">Required</span>
+                        </h3>
+                        <div class="part-status-text" id="status_gpu">No graphics card selected</div>
+                    </div>
+                    <div class="part-select-col">
+                        <select name="gpu" id="slot_gpu" class="builder-select" onchange="onSelectPart('gpu', this)">
+                            <option value="" data-price="0" data-name="" data-img="{% static 'images/parts/gpu.svg' %}">-- Select Graphics Card --</option>
+                            {% for p in gpus %}
+                                <option value="{{ p.id }}" 
+                                        data-price="{{ p.product_price }}" 
+                                        data-name="{{ p.product_name }}"
+                                        data-img="{% if p.product_image %}{{ p.product_image.url }}{% else %}{% static 'images/parts/gpu.svg' %}{% endif %}">
+                                    {{ p.product_name }} &bull; ₹{{ p.product_price|floatformat:2 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="part-price-col">
+                        <span class="part-price-display" id="price_gpu">₹0.00</span>
+                        <button type="button" class="btn-clear-slot" onclick="clearSlot('gpu')" title="Clear selection">✕</button>
+                    </div>
+                </div>
+
+                <!-- 4. RAM (Memory) -->
+                <div class="builder-row" id="row_ram">
+                    <div class="part-img-box">
+                        <img id="img_ram" src="{% static 'images/parts/ram.svg' %}" alt="RAM Memory" data-default="{% static 'images/parts/ram.svg' %}">
+                    </div>
+                    <div class="part-info-col">
+                        <h3 class="part-slot-title">
+                            4. RAM (Memory)
+                            <span class="part-tag tag-req">Required</span>
+                        </h3>
+                        <div class="part-status-text" id="status_ram">No RAM kit selected</div>
+                    </div>
+                    <div class="part-select-col">
+                        <select name="ram" id="slot_ram" class="builder-select" onchange="onSelectPart('ram', this)">
+                            <option value="" data-price="0" data-name="" data-img="{% static 'images/parts/ram.svg' %}">-- Select RAM Kit --</option>
+                            {% for p in rams %}
+                                <option value="{{ p.id }}" 
+                                        data-price="{{ p.product_price }}" 
+                                        data-name="{{ p.product_name }}"
+                                        data-img="{% if p.product_image %}{{ p.product_image.url }}{% else %}{% static 'images/parts/ram.svg' %}{% endif %}">
+                                    {{ p.product_name }} &bull; ₹{{ p.product_price|floatformat:2 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="part-price-col">
+                        <span class="part-price-display" id="price_ram">₹0.00</span>
+                        <button type="button" class="btn-clear-slot" onclick="clearSlot('ram')" title="Clear selection">✕</button>
+                    </div>
+                </div>
+
+                <!-- 5. Primary Storage (SSD) -->
+                <div class="builder-row" id="row_storage">
+                    <div class="part-img-box">
+                        <img id="img_storage" src="{% static 'images/parts/storage.svg' %}" alt="Storage SSD" data-default="{% static 'images/parts/storage.svg' %}">
+                    </div>
+                    <div class="part-info-col">
+                        <h3 class="part-slot-title">
+                            5. Primary Storage (SSD)
+                            <span class="part-tag tag-req">Required</span>
+                        </h3>
+                        <div class="part-status-text" id="status_storage">No storage drive selected</div>
+                    </div>
+                    <div class="part-select-col">
+                        <select name="storage" id="slot_storage" class="builder-select" onchange="onSelectPart('storage', this)">
+                            <option value="" data-price="0" data-name="" data-img="{% static 'images/parts/storage.svg' %}">-- Select NVMe SSD --</option>
+                            {% for p in storages %}
+                                <option value="{{ p.id }}" 
+                                        data-price="{{ p.product_price }}" 
+                                        data-name="{{ p.product_name }}"
+                                        data-img="{% if p.product_image %}{{ p.product_image.url }}{% else %}{% static 'images/parts/storage.svg' %}{% endif %}">
+                                    {{ p.product_name }} &bull; ₹{{ p.product_price|floatformat:2 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="part-price-col">
+                        <span class="part-price-display" id="price_storage">₹0.00</span>
+                        <button type="button" class="btn-clear-slot" onclick="clearSlot('storage')" title="Clear selection">✕</button>
+                    </div>
+                </div>
+
+                <!-- 6. Power Supply (PSU) -->
+                <div class="builder-row" id="row_psu">
+                    <div class="part-img-box">
+                        <img id="img_psu" src="{% static 'images/parts/psu.svg' %}" alt="Power Supply" data-default="{% static 'images/parts/psu.svg' %}">
+                    </div>
+                    <div class="part-info-col">
+                        <h3 class="part-slot-title">
+                            6. Power Supply (PSU)
+                            <span class="part-tag tag-req">Required</span>
+                        </h3>
+                        <div class="part-status-text" id="status_psu">No power supply selected</div>
+                    </div>
+                    <div class="part-select-col">
+                        <select name="psu" id="slot_psu" class="builder-select" onchange="onSelectPart('psu', this)">
+                            <option value="" data-price="0" data-name="" data-img="{% static 'images/parts/psu.svg' %}">-- Select Power Supply --</option>
+                            {% for p in psus %}
+                                <option value="{{ p.id }}" 
+                                        data-price="{{ p.product_price }}" 
+                                        data-name="{{ p.product_name }}"
+                                        data-img="{% if p.product_image %}{{ p.product_image.url }}{% else %}{% static 'images/parts/psu.svg' %}{% endif %}">
+                                    {{ p.product_name }} &bull; ₹{{ p.product_price|floatformat:2 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="part-price-col">
+                        <span class="part-price-display" id="price_psu">₹0.00</span>
+                        <button type="button" class="btn-clear-slot" onclick="clearSlot('psu')" title="Clear selection">✕</button>
+                    </div>
+                </div>
+
+                <!-- 7. Cabinet / Chassis -->
+                <div class="builder-row" id="row_cabinet">
+                    <div class="part-img-box">
+                        <img id="img_cabinet" src="{% static 'images/parts/cabinet.svg' %}" alt="Cabinet Case" data-default="{% static 'images/parts/cabinet.svg' %}">
+                    </div>
+                    <div class="part-info-col">
+                        <h3 class="part-slot-title">
+                            7. Cabinet / Chassis
+                            <span class="part-tag tag-req">Required</span>
+                        </h3>
+                        <div class="part-status-text" id="status_cabinet">No cabinet selected</div>
+                    </div>
+                    <div class="part-select-col">
+                        <select name="cabinet" id="slot_cabinet" class="builder-select" onchange="onSelectPart('cabinet', this)">
+                            <option value="" data-price="0" data-name="" data-img="{% static 'images/parts/cabinet.svg' %}">-- Select Cabinet --</option>
+                            {% for p in cabinets %}
+                                <option value="{{ p.id }}" 
+                                        data-price="{{ p.product_price }}" 
+                                        data-name="{{ p.product_name }}"
+                                        data-img="{% if p.product_image %}{{ p.product_image.url }}{% else %}{% static 'images/parts/cabinet.svg' %}{% endif %}">
+                                    {{ p.product_name }} &bull; ₹{{ p.product_price|floatformat:2 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="part-price-col">
+                        <span class="part-price-display" id="price_cabinet">₹0.00</span>
+                        <button type="button" class="btn-clear-slot" onclick="clearSlot('cabinet')" title="Clear selection">✕</button>
+                    </div>
+                </div>
+
+                <!-- 8. CPU Cooler -->
+                <div class="builder-row" id="row_cooler">
+                    <div class="part-img-box">
+                        <img id="img_cooler" src="{% static 'images/parts/cooler.svg' %}" alt="CPU Cooler" data-default="{% static 'images/parts/cooler.svg' %}">
+                    </div>
+                    <div class="part-info-col">
+                        <h3 class="part-slot-title">
+                            8. CPU Cooler
+                            <span class="part-tag tag-opt">Optional</span>
+                        </h3>
+                        <div class="part-status-text" id="status_cooler">Stock or no cooler selected</div>
+                    </div>
+                    <div class="part-select-col">
+                        <select name="cooler" id="slot_cooler" class="builder-select" onchange="onSelectPart('cooler', this)">
+                            <option value="" data-price="0" data-name="" data-img="{% static 'images/parts/cooler.svg' %}">-- Select CPU Cooler (Optional) --</option>
+                            {% for p in coolers %}
+                                <option value="{{ p.id }}" 
+                                        data-price="{{ p.product_price }}" 
+                                        data-name="{{ p.product_name }}"
+                                        data-img="{% if p.product_image %}{{ p.product_image.url }}{% else %}{% static 'images/parts/cooler.svg' %}{% endif %}">
+                                    {{ p.product_name }} &bull; ₹{{ p.product_price|floatformat:2 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="part-price-col">
+                        <span class="part-price-display" id="price_cooler">₹0.00</span>
+                        <button type="button" class="btn-clear-slot" onclick="clearSlot('cooler')" title="Clear selection">✕</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Bottom Summary Card -->
+            <div class="bottom-summary-card">
+                <div class="bottom-summary-info">
+                    <h3>Ready to build your custom rig?</h3>
+                    <p>All parts will be individually verified for compatibility and safely packaged by NEXORIG technicians.</p>
+                </div>
+                <button type="submit" class="btn-add-build" style="font-size: 1.05rem; padding: 14px 30px;">
+                    🛒 Add Entire Build to Cart &rarr;
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</section>
+
+<!-- Basic JavaScript to calculate total & update live image / status dynamically -->
+<script>
+    const slots = ['cpu', 'motherboard', 'gpu', 'ram', 'storage', 'psu', 'cabinet', 'cooler'];
+
+    function onSelectPart(slotKey, selectElem) {
+        const row = document.getElementById('row_' + slotKey);
+        const img = document.getElementById('img_' + slotKey);
+        const status = document.getElementById('status_' + slotKey);
+        const priceDisplay = document.getElementById('price_' + slotKey);
+
+        if (!selectElem || !row || !img || !status || !priceDisplay) return;
+
+        const opt = selectElem.options[selectElem.selectedIndex];
+        const val = selectElem.value;
+        const price = parseFloat(opt.getAttribute('data-price') || 0);
+        const name = opt.getAttribute('data-name') || '';
+        const imgSrc = opt.getAttribute('data-img') || img.getAttribute('data-default');
+
+        if (val) {
+            row.classList.add('filled');
+            img.src = imgSrc;
+            status.innerHTML = '<strong style="color: #00e676;">✓ ' + name + '</strong>';
+            priceDisplay.innerText = '₹' + price.toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        } else {
+            row.classList.remove('filled');
+            img.src = img.getAttribute('data-default');
+            status.innerText = 'No component selected';
+            priceDisplay.innerText = '₹0.00';
+        }
+
+        calculateBuildTotal();
+    }
+
+    function clearSlot(slotKey) {
+        const select = document.getElementById('slot_' + slotKey);
+        if (select) {
+            select.selectedIndex = 0;
+            onSelectPart(slotKey, select);
+        }
+    }
+
+    function calculateBuildTotal() {
+        let grandTotal = 0;
+        let count = 0;
+
+        slots.forEach(function(slotKey) {
+            const select = document.getElementById('slot_' + slotKey);
+            if (select && select.value) {
+                const opt = select.options[select.selectedIndex];
+                const price = parseFloat(opt.getAttribute('data-price') || 0);
+                grandTotal += price;
+                count++;
+            }
+        });
+
+        const countEl = document.getElementById('chosen_count');
+        const priceEl = document.getElementById('total_price_display');
+
+        if (countEl) countEl.innerText = count;
+        if (priceEl) {
+            priceEl.innerText = '₹' + grandTotal.toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+    }
+
+    function resetBuild() {
+        slots.forEach(function(slotKey) {
+            clearSlot(slotKey);
+        });
+    }
+</script>
+{% endblock content %}

@@ -1,0 +1,155 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}Order Placed Successfully | NEXORIG{% endblock title %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}?v=4.0">
+    <style>
+        .order-success-card {
+            background: #141724;
+            border: 1px solid rgba(0, 230, 118, 0.4);
+            border-radius: 20px;
+            max-width: 720px;
+            margin: 40px auto;
+            padding: 40px 30px;
+            box-shadow: 0 0 30px rgba(0, 230, 118, 0.15);
+            text-align: center;
+        }
+        .order-success-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(0, 230, 118, 0.15);
+            border: 2px solid #00e676;
+            color: #00e676;
+            font-size: 2.5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .order-uuid-box {
+            background: #10121a;
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 24px 0;
+            text-align: left;
+        }
+        .order-uuid-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .order-uuid-code {
+            font-family: monospace;
+            color: #00d2ff;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        .order-items-summary {
+            text-align: left;
+            margin: 20px 0;
+            background: #10121a;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 16px 20px;
+        }
+        .order-item-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 0.92rem;
+            color: #cbd5e1;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .order-item-line:last-child {
+            border-bottom: none;
+        }
+    </style>
+{% endblock extra_css %}
+
+{% block content %}
+<section class="cart-page-section">
+    <div class="cart-container">
+
+        <div class="order-success-card">
+            <div class="order-success-icon">✓</div>
+            <h1 style="font-family: 'Outfit', sans-serif; font-size: 2.2rem; color: #fff; margin-bottom: 12px;">Order Placed Successfully!</h1>
+            <p style="color: #94a3b8; font-size: 1rem; line-height: 1.6; max-width: 600px; margin: 0 auto 20px;">
+                Thank you, <strong>{{ request.user.username }}</strong>! Your order has been placed. We have sent an email confirmation to <strong>{{ request.user.email|default:'your registered email' }}</strong>.
+            </p>
+
+            <!-- Order Reference Box -->
+            <div class="order-uuid-box">
+                <div class="order-uuid-row">
+                    <div>
+                        <span style="font-size: 0.8rem; color: #94a3b8; text-transform: uppercase;">Order UUID:</span><br>
+                        <span class="order-uuid-code">{{ order.order_id }}</span>
+                    </div>
+                    <span style="background: rgba(0, 230, 118, 0.15); color: #00e676; padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; text-transform: uppercase;">
+                        ✓ {{ order.status }}
+                    </span>
+                </div>
+                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 0.9rem; color: #cbd5e1;">
+                    <div>Paid via: <strong>{{ order.payment_method }}</strong></div>
+                    <div>Total Paid: <strong style="color: #00d2ff; font-size: 1.1rem;">₹{{ order.total_amount|floatformat:2 }}</strong></div>
+                </div>
+                {% if order.razorpay_order_id or order.razorpay_payment_id %}
+                    <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.06); font-size: 0.85rem; color: #94a3b8; display: flex; flex-direction: column; gap: 5px;">
+                        {% if order.razorpay_order_id %}
+                            <div><strong>Razorpay Order ID:</strong> <code style="color: #00d2ff;">{{ order.razorpay_order_id }}</code></div>
+                        {% endif %}
+                        {% if order.razorpay_payment_id %}
+                            <div><strong>Razorpay Payment ID:</strong> <code style="color: #00e676;">{{ order.razorpay_payment_id }}</code></div>
+                        {% endif %}
+                        {% if order.razorpay_signature %}
+                            <div><strong>Razorpay Signature:</strong> <code style="color: #cbd5e1; word-break: break-all;">{{ order.razorpay_signature }}</code></div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                {% if order.shipping_address_text %}
+                    <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.06); font-size: 0.85rem; color: #94a3b8;">
+                        📍 <strong>Delivery Address:</strong> {{ order.shipping_address_text }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Items Ordered -->
+            <div class="order-items-summary">
+                <h4 style="color: #fff; margin: 0 0 10px 0; font-size: 0.95rem; font-weight: 700;">Ordered Hardware:</h4>
+                {% for item in order.items.all %}
+                    <div class="order-item-line">
+                        <div>
+                            <strong>{{ item.product_name }}</strong>
+                            <span style="color: #94a3b8; font-size: 0.85rem;">(Qty: {{ item.quantity }})</span>
+                        </div>
+                        <div style="font-weight: 700; color: #00d2ff;">
+                            ₹{{ item.get_subtotal|floatformat:2 }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Action Navigation Buttons -->
+            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 28px;">
+                <a href="{% url 'my_orders' %}" class="btn-explore-shop" style="text-decoration: none; padding: 13px 30px; border-radius: 8px; background: linear-gradient(135deg, #00d2ff 0%, #0070f3 100%); color: #000; font-weight: 700;">
+                    <span>📦 View in My Orders</span>
+                </a>
+                <a href="{% url 'home' %}" class="btn btn-outline" style="text-decoration: none; padding: 13px 28px; border-radius: 8px;">
+                    <span>Continue Shopping</span>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+{% endblock content %}

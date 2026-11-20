@@ -1,0 +1,436 @@
+{% extends "layout.html" %}
+{% load helper %}
+{% block title %}NEXORIG – Premium PC Components & Accessories{% endblock title %}
+{% block content %}
+<!-- Main Content -->
+    <main id="home">
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-glow hero-glow-1"></div>
+            <div class="hero-glow hero-glow-2"></div>
+            <div class="container hero-container">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span class="badge-dot"></span> NEXT GENERATION PC COMPONENTS
+                    </div>
+                    <h1 class="hero-title">BUILD BEYOND <span>LIMITS.</span></h1>
+                    <p class="hero-subtitle">
+                        Your Ultimate Destination for PC Components. Discover flagship processors, top-tier GPUs, ultra-fast storage, and high-performance hardware engineered for peak performance.
+                    </p>
+
+                    <!-- Category Highlights Ribbon -->
+                    <div class="hero-category-ribbon" style="margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.76rem; font-weight: 800; letter-spacing: 0.06em;">
+                        <span style="background: rgba(0, 210, 255, 0.12); border: 1px solid rgba(0, 210, 255, 0.3); color: #00d2ff; padding: 5px 12px; border-radius: 20px;">PROCESSORS</span>
+                        <span style="background: rgba(0, 230, 118, 0.12); border: 1px solid rgba(0, 230, 118, 0.3); color: #00e676; padding: 5px 12px; border-radius: 20px;">GRAPHICS CARDS</span>
+                        <span style="background: rgba(179, 136, 255, 0.12); border: 1px solid rgba(179, 136, 255, 0.3); color: #b388ff; padding: 5px 12px; border-radius: 20px;">RAM</span>
+                        <span style="background: rgba(255, 215, 64, 0.12); border: 1px solid rgba(255, 215, 64, 0.3); color: #ffd740; padding: 5px 12px; border-radius: 20px;">SSD</span>
+                        <span style="background: rgba(0, 210, 255, 0.12); border: 1px solid rgba(0, 210, 255, 0.3); color: #00d2ff; padding: 5px 12px; border-radius: 20px;">MOTHERBOARDS</span>
+                    </div>
+
+                    <div class="hero-cta">
+                        <a href="{% url 'custom_pc_build' %}" class="btn btn-primary btn-lg" style="background: linear-gradient(135deg, #00e676, #00b0ff); color: #000; font-weight: 800;">
+                            🛠️ Custom PC Builder
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </a>
+                        <a href="#products" class="btn btn-secondary btn-lg">Shop Components</a>
+                    </div>
+                    <div class="hero-features">
+                        <div class="feature-item">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            <span>100% Genuine Brands</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                            <span>Express Shipping</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                            <span>Official Warranty</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-visual">
+                    <div class="hero-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=1000&q=80" alt="High Performance Custom RGB Gaming PC Build" class="hero-img">
+
+                        <!-- Floating Tech Tags -->
+                        <div class="floating-tag tag-1">
+                            <div class="tag-icon">⚡</div>
+                            <div class="tag-text">
+                                <span class="tag-title">RTX 4090 OC</span>
+                                <span class="tag-sub">24GB GDDR6X</span>
+                            </div>
+                        </div>
+
+                        <div class="floating-tag tag-2">
+                            <div class="tag-icon">🔥</div>
+                            <div class="tag-text">
+                                <span class="tag-title">Ryzen 7 7800X3D</span>
+                                <span class="tag-sub">3D V-Cache Monster</span>
+                            </div>
+                        </div>
+
+                        <div class="floating-tag tag-3">
+                            <div class="tag-icon">🚀</div>
+                            <div class="tag-text">
+                                <span class="tag-title">DDR5 6000MHz</span>
+                                <span class="tag-sub">Ultra Low Latency</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Products Section -->
+        <section class="section products-section" id="products">
+            <div class="container">
+                <div class="section-header">
+                    {% if selected_category_obj %}
+                        <div class="header-tag">CATEGORY FILTER</div>
+                        <h2 class="section-title"><span>{{ selected_category_obj.category_name }}</span></h2>
+                        <p class="section-subtitle">
+                            Showing products in <strong>{{ selected_category_obj.category_name }}</strong> &bull;
+                            <a href="/#products" style="color: #00d2ff; text-decoration: underline; font-weight: 700; margin-left: 6px;">✕ Clear Filter (View All)</a>
+                        </p>
+                    {% else %}
+                        <div class="header-tag">MY PICK &bull; NEXORIG</div>
+                        <h2 class="section-title">FEATURED <span>COMPONENTS</span></h2>
+                        <p class="section-subtitle">Top-performing PC components handpicked for ultimate power, reliability, and extreme performance</p>
+                    {% endif %}
+                </div>
+
+                <div class="products-grid">
+                    {% if products %}
+                        {% for product in products|slice:":8" %}
+                        <div class="product-card">
+                            <div class="product-img-wrapper">
+                                {% is_in_wishlist request.user product as in_fav %}
+                                <a href="{% url 'toggle_wishlist' product.id %}" class="btn-fav {% if in_fav %}active{% endif %}" aria-label="Favorite {{ product.product_name }}" title="{% if in_fav %}Remove from Wishlist{% else %}Add to Wishlist{% endif %}">
+                                    <svg class="heart-svg" viewBox="0 0 24 24" width="18" height="18">
+                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                    </svg>
+                                </a>
+                                <a href="{% url 'product_detail' product.product_slug %}" class="product-card-link" title="View {{ product.product_name }}">
+                                    {% if product.product_image %}
+                                        <img src="{{ product.product_image.url }}" alt="{{ product.product_name }}" class="product-img">
+                                    {% else %}
+                                        <img src="https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=600&q=80" alt="{{ product.product_name }}" class="product-img">
+                                    {% endif %}
+                                </a>
+                                <div class="product-actions-overlay">
+                                    <a href="{% url 'product_detail' product.product_slug %}" class="btn btn-secondary btn-sm">View Details</a>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <span class="product-brand">{{ product.product_category.category_name }}</span>
+                                <h3 class="product-title"><a href="{% url 'product_detail' product.product_slug %}">{{ product.product_name }}</a></h3>
+                                <p class="product-desc">{{ product.product_description }}</p>
+                                <div class="product-rating">
+                                    <div class="stars">★★★★★</div>
+                                    <span class="rating-count">({% if product.product_quantity_in_stock > 0 %}In Stock: {{ product.product_quantity_in_stock }}{% else %}Out of stock{% endif %})</span>
+                                </div>
+                                <div class="product-price-row">
+                                    <div class="price-wrapper">
+                                        <span class="discount-price">₹{{ product.product_price }}</span>
+                                    </div>
+                                </div>
+                                <div class="card-btn-group">
+                                    <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary btn-block">Add to Cart</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--text-muted);">
+                            <div style="font-size: 2.5rem; margin-bottom: 12px;">📦</div>
+                            <h3 style="color: var(--text-white); margin-bottom: 8px;">No Products in Database Yet</h3>
+                            <p style="margin-bottom: 20px;">You can add products from your <a href="/admin/store/product/add/" style="color: var(--primary-blue); font-weight: 600; text-decoration: underline;">Django Admin Panel</a>.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Best Sellers Section -->
+        <section class="section best-sellers-section">
+            <div class="container">
+                <div class="section-header">
+                    <div class="header-tag">MOST POPULAR</div>
+                    <h2 class="section-title">BEST <span>SELLERS</span></h2>
+                    <p class="section-subtitle">Hardware components rated highest by PC builders across the nation</p>
+                </div>
+
+                <div class="product-grid best-sellers-grid">
+                    <!-- Best Seller 1 -->
+                    <div class="product-card horizontal-card">
+                        <div class="product-badge">17% OFF</div>
+                        <div class="product-img-wrapper">
+                            <button type="button" class="btn-fav" data-fav-id="bs-1" onclick="toggleFavorite('bs-1', 'Lian Li O11 Dynamic EVO Case')" aria-label="Favorite Lian Li Case" title="Add to Favorites">
+                                <svg class="heart-svg" viewBox="0 0 24 24" width="18" height="18">
+                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                </svg>
+                            </button>
+                            <img src="https://images.unsplash.com/photo-1587202372634-32705e3bf49c?auto=format&fit=crop&w=600&q=80" alt="Lian Li O11 Dynamic EVO Case" class="product-img">
+                        </div>
+                        <div class="product-info">
+                            <span class="product-brand">LIAN LI</span>
+                            <h3 class="product-title"><a href="/product_detail/">Lian Li O11 Dynamic EVO Glass Tower Case</a></h3>
+                            <div class="product-rating">
+                                <div class="stars">★★★★★</div>
+                                <span class="rating-count">(210)</span>
+                            </div>
+                            <div class="product-price-row">
+                                <div class="price-wrapper">
+                                    <span class="discount-price">₹14,990</span>
+                                    <span class="original-price">₹18,000</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-block" onclick="showFavToast('Added Lian Li O11 Dynamic EVO Case to cart! 🛒', true)">Add to Cart</button>
+                        </div>
+                    </div>
+
+                    <!-- Best Seller 2 -->
+                    <div class="product-card horizontal-card">
+                        <div class="product-badge">20% OFF</div>
+                        <div class="product-img-wrapper">
+                            <button type="button" class="btn-fav" data-fav-id="bs-2" onclick="toggleFavorite('bs-2', 'Corsair RM1000x Shift PSU')" aria-label="Favorite Corsair PSU" title="Add to Favorites">
+                                <svg class="heart-svg" viewBox="0 0 24 24" width="18" height="18">
+                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                </svg>
+                            </button>
+                            <img src="https://images.unsplash.com/photo-1600861194942-f883de0dfe96?auto=format&fit=crop&w=600&q=80" alt="Corsair RM1000x Shift PSU" class="product-img">
+                        </div>
+                        <div class="product-info">
+                            <span class="product-brand">CORSAIR</span>
+                            <h3 class="product-title"><a href="/product_detail/">Corsair RM1000x Shift 80+ Gold Modular PSU</a></h3>
+                            <div class="product-rating">
+                                <div class="stars">★★★★★</div>
+                                <span class="rating-count">(184)</span>
+                            </div>
+                            <div class="product-price-row">
+                                <div class="price-wrapper">
+                                    <span class="discount-price">₹16,490</span>
+                                    <span class="original-price">₹20,500</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-block" onclick="showFavToast('Added Corsair RM1000x Shift PSU to cart! 🛒', true)">Add to Cart</button>
+                        </div>
+                    </div>
+
+                    <!-- Best Seller 3 -->
+                    <div class="product-card horizontal-card">
+                        <div class="product-badge">18% OFF</div>
+                        <div class="product-img-wrapper">
+                            <button type="button" class="btn-fav" data-fav-id="bs-3" onclick="toggleFavorite('bs-3', 'LG UltraGear 27 inch OLED Gaming Monitor')" aria-label="Favorite LG Monitor" title="Add to Favorites">
+                                <svg class="heart-svg" viewBox="0 0 24 24" width="18" height="18">
+                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                </svg>
+                            </button>
+                            <img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=600&q=80" alt="LG UltraGear 27 inch OLED Gaming Monitor" class="product-img">
+                        </div>
+                        <div class="product-info">
+                            <span class="product-brand">LG ULTRA GEAR</span>
+                            <h3 class="product-title"><a href="/product_detail/">LG UltraGear 27&quot; QHD OLED 240Hz Gaming Monitor</a></h3>
+                            <div class="product-rating">
+                                <div class="stars">★★★★★</div>
+                                <span class="rating-count">(98)</span>
+                            </div>
+                            <div class="product-price-row">
+                                <div class="price-wrapper">
+                                    <span class="discount-price">₹69,990</span>
+                                    <span class="original-price">₹85,000</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-block" onclick="showFavToast('Added LG UltraGear 27&quot; Gaming Monitor to cart! 🛒', true)">Add to Cart</button>
+                        </div>
+                    </div>
+
+                    <!-- Best Seller 4 -->
+                    <div class="product-card horizontal-card">
+                        <div class="product-badge">20% OFF</div>
+                        <div class="product-img-wrapper">
+                            <button type="button" class="btn-fav" data-fav-id="bs-4" onclick="toggleFavorite('bs-4', 'Razer Basilisk V3 Pro Wireless Mouse')" aria-label="Favorite Razer Mouse" title="Add to Favorites">
+                                <svg class="heart-svg" viewBox="0 0 24 24" width="18" height="18">
+                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                </svg>
+                            </button>
+                            <img src="https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&w=600&q=80" alt="Razer Basilisk V3 Pro Wireless Mouse" class="product-img">
+                        </div>
+                        <div class="product-info">
+                            <span class="product-brand">RAZER</span>
+                            <h3 class="product-title"><a href="/product_detail/">Razer Basilisk V3 Pro Ergonomic Wireless Gaming Mouse</a></h3>
+                            <div class="product-rating">
+                                <div class="stars">★★★★★</div>
+                                <span class="rating-count">(142)</span>
+                            </div>
+                            <div class="product-price-row">
+                                <div class="price-wrapper">
+                                    <span class="discount-price">₹11,990</span>
+                                    <span class="original-price">₹15,000</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-block" onclick="showFavToast('Added Razer Basilisk V3 Pro Mouse to cart! 🛒', true)">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why Choose Us Section -->
+        <section class="section why-us-section">
+            <div class="container">
+                <div class="section-header">
+                    <div class="header-tag">THE NEXORIG ADVANTAGE</div>
+                    <h2 class="section-title">WHY CHOOSE <span>NEXORIG?</span></h2>
+                    <p class="section-subtitle">We bring you official brand warranties, competitive pricing, and fast insured delivery across India</p>
+                </div>
+
+                <div class="why-us-grid">
+                    <!-- Feature 1 -->
+                    <div class="why-card">
+                        <div class="why-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                <polyline points="9 12 11 14 15 10"></polyline>
+                            </svg>
+                        </div>
+                        <h3 class="why-title">Genuine Products</h3>
+                        <p class="why-desc">100% authentic hardware sourced directly from authorized brand distributors with official GST invoice & warranty.</p>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="why-card">
+                        <div class="why-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                        </div>
+                        <h3 class="why-title">Best Prices</h3>
+                        <p class="why-desc">Unbeatable price matching and exclusive bundle discounts on high-end custom gaming components.</p>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="why-card">
+                        <div class="why-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="1" y="3" width="15" height="13"></rect>
+                                <polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon>
+                                <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                                <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                            </svg>
+                        </div>
+                        <h3 class="why-title">Fast Delivery</h3>
+                        <p class="why-desc">Insured express shipping across India with multi-layer anti-static shockproof packaging.</p>
+                    </div>
+
+                    <!-- Feature 4 -->
+                    <div class="why-card">
+                        <div class="why-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                        </div>
+                        <h3 class="why-title">Secure Payments</h3>
+                        <p class="why-desc">256-bit encrypted checkout supporting UPI, Credit Cards, Debit Cards, No-Cost EMI, & NetBanking.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Customer Reviews Section -->
+        <section class="section reviews-section">
+            <div class="container">
+                <div class="section-header">
+                    <div class="header-tag">TESTIMONIALS</div>
+                    <h2 class="section-title">WHAT OUR <span>CUSTOMERS SAY</span></h2>
+                    <p class="section-subtitle">Real experiences from gamers, streamers, and custom PC builders across India</p>
+                </div>
+
+                <div class="reviews-grid">
+                    <!-- Review 1 -->
+                    <div class="review-card">
+                        <div class="review-header">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" alt="Rohan Sharma" class="reviewer-avatar">
+                            <div class="reviewer-meta">
+                                <h3 class="reviewer-name">Rohan Sharma</h3>
+                                <span class="reviewer-role">Custom PC Builder, Delhi</span>
+                            </div>
+                        </div>
+                        <div class="review-stars">★★★★★</div>
+                        <p class="review-text">
+                            "Ordered an RTX 4090 and Ryzen 7 7800X3D combo. Delivery was lightning fast in 2 days to Delhi! Packaging was double-boxed with anti-static foam. NEXORIG is hands-down the best hardware store!"
+                        </p>
+                    </div>
+
+                    <!-- Review 2 -->
+                    <div class="review-card">
+                        <div class="review-header">
+                            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80" alt="Ananya Verma" class="reviewer-avatar">
+                            <div class="reviewer-meta">
+                                <h3 class="reviewer-name">Ananya Verma</h3>
+                                <span class="reviewer-role">3D Animator, Mumbai</span>
+                            </div>
+                        </div>
+                        <div class="review-stars">★★★★★</div>
+                        <p class="review-text">
+                            "Building my workstation was so effortless with NEXORIG. Got genuine ASUS motherboard and Corsair DDR5 RAM at lower prices than local markets. Technical support answered my compatibility query in 10 minutes!"
+                        </p>
+                    </div>
+
+                    <!-- Review 3 -->
+                    <div class="review-card">
+                        <div class="review-header">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80" alt="Vikramaditya Singh" class="reviewer-avatar">
+                            <div class="reviewer-meta">
+                                <h3 class="reviewer-name">Vikramaditya Singh</h3>
+                                <span class="reviewer-role">Esports Player, Bengaluru</span>
+                            </div>
+                        </div>
+                        <div class="review-stars">★★★★★</div>
+                        <p class="review-text">
+                            "Bought the LG OLED 240Hz monitor and Samsung 990 Pro SSD. Absolute game changer! 100% genuine product with official Indian GST invoice and warranty cards inside. Highly recommended!"
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter Section -->
+        <section class="newsletter-section">
+            <div class="container">
+                <div class="newsletter-card">
+                    <div class="newsletter-glow"></div>
+                    <div class="newsletter-content">
+                        <div class="newsletter-icon">
+                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                        </div>
+                        <h2 class="newsletter-title">Stay Updated with <span>NEXORIG</span></h2>
+                        <p class="newsletter-desc">
+                            Subscribe to our VIP newsletter for instant GPU drop alerts, flash sales, price-drop notifications, and exclusive hardware discount vouchers &bull; nexorig.com
+                        </p>
+
+                        <form class="newsletter-form" onsubmit="return false;">
+                            <div class="input-group">
+                                <input type="email" placeholder="Enter your email address..." required aria-label="Email address for newsletter">
+                                <button type="submit" class="btn btn-primary">Subscribe Now</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+{% endblock content %}

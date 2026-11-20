@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <rect width="120" height="120" rx="16" fill="#141824"/>
+  <!-- PSU Block -->
+  <rect x="22" y="24" width="76" height="72" rx="6" fill="#1e2436" stroke="#ffaa00" stroke-width="2"/>
+  <!-- Fan Grille -->
+  <circle cx="60" cy="54" r="22" fill="#0d111a" stroke="#ffaa00" stroke-width="1.5"/>
+  <circle cx="60" cy="54" r="8" fill="#ffaa00" opacity="0.4"/>
+  <!-- Power Switch & Socket -->
+  <rect x="32" y="82" width="16" height="8" rx="2" fill="#0d111a" stroke="#ffffff" stroke-width="1"/>
+  <rect x="58" y="82" width="28" height="8" rx="2" fill="#0d111a" stroke="#00e676" stroke-width="1"/>
+  <text x="60" y="18" font-family="'Outfit', sans-serif" font-size="11" font-weight="bold" fill="#ffaa00" text-anchor="middle">POWER SUPPLY</text>
+  <text x="60" y="110" font-family="'Outfit', sans-serif" font-size="10" fill="#00e676" text-anchor="middle">80+ GOLD</text>
+</svg>

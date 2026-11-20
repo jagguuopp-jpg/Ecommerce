@@ -1,0 +1,571 @@
+{% load static helper %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NEXORIG – Premium PC Components & Accessories{% endblock title %}</title>
+    <meta name="description" content="NEXORIG: Build Beyond Limits. Your Ultimate Destination for PC Components. Processors, Graphics Cards, RAM, SSD, Motherboards, and Custom PC Builds.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=5.0">
+    <link rel="stylesheet" href="{% static 'css/dropdown.css' %}?v=5.0">
+    <link rel="stylesheet" href="{% static 'css/wishlist.css' %}?v=5.0">
+    <link rel="stylesheet" href="{% static 'css/ai_assistant.css' %}?v=5.0">
+    {% block extra_css %}{% endblock extra_css %}
+</head>
+<body>
+
+    <!-- Top Announcement Bar -->
+    <div class="announcement-bar">
+        <div class="container announcement-content">
+            <p>⚡ <span>FLASH SALE:</span> Get Extra 10% OFF on RTX 40-Series GPUs with Code: <strong>NEXORIG10</strong> | Free Express Shipping across India | nexorig.com</p>
+        </div>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="header">
+        <div class="container nav-container">
+            <!-- Logo -->
+            <a href="/" class="logo">
+                <div class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                        <path d="M6 12h12"></path>
+                        <path d="M12 6v12"></path>
+                        <circle cx="12" cy="12" r="3" fill="currentColor"></circle>
+                    </svg>
+                </div>
+                <span class="logo-text">NEXO<span>RIG</span></span>
+            </a>
+
+            <!-- Search Bar -->
+            <div class="search-box">
+                <input type="text" placeholder="Search GPUs, CPUs, Motherboards, RAM..." aria-label="Search hardware">
+                <button type="button" aria-label="Submit search">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- CSS Mobile Nav Toggle Checkbox -->
+            <input type="checkbox" id="nav-toggle" class="nav-toggle">
+            <label for="nav-toggle" class="nav-toggle-label" aria-label="Toggle navigation menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <!-- Navigation Links -->
+            <nav class="nav-menu">
+                <ul class="nav-list">
+                    <li><a href="{% url 'home' %}" class="nav-link active">Home</a></li>
+
+                    <!-- Categories Dropdown (Shows all available categories) -->
+                    <li class="nav-cat-dropdown">
+                        <button type="button" class="nav-link nav-cat-btn" onclick="toggleNavCategoryMenu(event)">
+                            <span>Categories</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        <div class="nav-cat-menu" id="navCategoryMenu">
+                            {% get_categories as nav_cats %}
+                            {% for c in nav_cats %}
+                                <a href="/?category={{ c.category_slug }}#products" class="nav-cat-link">
+                                    <span class="cat-icon-bullet">⚡</span>
+                                    <span>{{ c.category_name }}</span>
+                                </a>
+                            {% endfor %}
+                            <div style="border-top: 1px solid rgba(255,255,255,0.08); margin: 6px 0;"></div>
+                            <a href="{% url 'categories' %}" class="nav-cat-link" style="color: #00d2ff; font-weight: 700;">
+                                <span class="cat-icon-bullet">📁</span>
+                                <span>Browse All Categories &rarr;</span>
+                            </a>
+                        </div>
+                    </li>
+
+                    <li><a href="{% url 'custom_pc_build' %}" class="nav-link" style="color: #00e676; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">🛠️ PC Builder</a></li>
+                    <li><a href="{% url 'contact_us' %}" class="nav-link">Enquire</a></li>
+                    {% if request.user.is_staff or request.user.is_superuser %}
+                    <li><a href="{% url 'admin_dashboard' %}" class="nav-link" style="color: #00d2ff; font-weight: 700;">⚡ Dashboard</a></li>
+                    {% endif %}
+                </ul>
+
+                <!-- Mobile Header Actions inside menu for phone layout -->
+                <div class="mobile-actions">
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'logout' %}" class="btn btn-outline btn-sm">Log Out ({{ request.user.username }})</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-outline btn-sm">Login / Sign Up</a>
+                    {% endif %}
+                </div>
+            </nav>
+
+            <!-- Header Actions -->
+            <div class="header-actions">
+                {% if request.user.is_authenticated %}
+                    <!-- User Profile Dropdown -->
+                    <div class="user-dropdown" id="userDropdown">
+                        <button type="button" class="user-dropdown-btn" onclick="toggleUserDropdown(event)" aria-haspopup="true" aria-expanded="false" id="userDropdownBtn">
+                            <div class="user-avatar">
+                                <span>{{ request.user.username|make_list|first|upper }}</span>
+                            </div>
+                            <span class="user-name">{{ request.user.username }}</span>
+                            <svg class="dropdown-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="user-dropdown-menu" id="userDropdownMenu">
+                            <div class="dropdown-user-header">
+                                <div class="dropdown-avatar-large">
+                                    <span>{{ request.user.username|make_list|first|upper }}</span>
+                                </div>
+                                <div class="dropdown-user-details">
+                                    <span class="dropdown-username">{{ request.user.username }}</span>
+                                    <span class="dropdown-badge {% if request.user.is_superuser %}badge-admin{% elif request.user.is_staff %}badge-staff{% else %}badge-gamer{% endif %}">
+                                        <span class="role-dot"></span>
+                                        {% if request.user.is_superuser %}Admin{% elif request.user.is_staff %}Staff{% else %}Gamer Member{% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <ul class="dropdown-links">
+                                <li>
+                                    <a href="{% url 'my_orders' %}" class="dropdown-item">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                                            <path d="M16 10a4 4 0 0 1-8 0"></path>
+                                        </svg>
+                                        <span>My Orders</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'favourites' %}" class="dropdown-item">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                        </svg>
+                                        <span>Wishlist</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'addresses' %}" class="dropdown-item">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                            <circle cx="12" cy="10" r="3"></circle>
+                                        </svg>
+                                        <span>Addresses</span>
+                                    </a>
+                                </li>
+                                {% if request.user.is_staff or request.user.is_superuser %}
+                                <li>
+                                    <a href="{% url 'admin_dashboard' %}" class="dropdown-item admin-link" style="color: #00d2ff;">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="3" y="3" width="7" height="9"></rect>
+                                            <rect x="14" y="3" width="7" height="5"></rect>
+                                            <rect x="14" y="12" width="7" height="9"></rect>
+                                            <rect x="3" y="16" width="7" height="5"></rect>
+                                        </svg>
+                                        <span>⚡ Admin Dashboard</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/admin/" class="dropdown-item admin-link">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                        </svg>
+                                        <span>Django Admin</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-footer">
+                                <a href="{% url 'logout' %}" class="dropdown-item logout-link">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                        <polyline points="16 17 21 12 16 7"></polyline>
+                                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                                    </svg>
+                                    <span>Log Out</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline nav-auth-btn">Login / Sign Up</a>
+                {% endif %}
+                <a href="{% url 'favourites' %}" class="wishlist-btn" aria-label="Favorites" title="View Favorites">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                    <span class="wishlist-badge" id="wishlistCount">{% get_wishlist_count request.user %}</span>
+                </a>
+                <a href="{% url 'cart' %}" class="cart-btn" aria-label="Shopping Cart" title="View Cart">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span class="cart-badge">{% get_cart_count request.user %}</span>
+                </a>
+            </div>
+        </div>
+    </header>
+   {% block content %}{% endblock content %}
+
+
+
+
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Col 1: Brand Info -->
+                <div class="footer-col brand-col">
+                    <a href="/" class="logo footer-logo">
+                        <div class="logo-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                <path d="M6 12h12"></path>
+                                <path d="M12 6v12"></path>
+                                <circle cx="12" cy="12" r="3" fill="currentColor"></circle>
+                            </svg>
+                        </div>
+                        <span class="logo-text">NEXO<span>RIG</span></span>
+                    </a>
+                    <p class="footer-desc">
+                        Your Ultimate Destination for PC Components. Discover flagship processors, top-tier GPUs, ultra-fast storage, and high-performance hardware engineered for peak performance. Build Beyond Limits &bull; nexorig.com
+                    </p>
+                    <div class="social-links">
+                        <a href="#twitter" aria-label="Twitter X">
+                            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        </a>
+                        <a href="#instagram" aria-label="Instagram">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                        </a>
+                        <a href="#youtube" aria-label="YouTube">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
+                        </a>
+                        <a href="#discord" aria-label="Discord">
+                            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.893.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Col 2: Quick Links -->
+                <div class="footer-col">
+                    <h3 class="footer-title">Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'custom_pc_build' %}">PC Builder</a></li>
+                        <li><a href="/#products">All Products</a></li>
+                        <li><a href="{% url 'contact_us' %}">Enquire / Support</a></li>
+                        <li><a href="#home">Back to Top</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Product Categories -->
+                <div class="footer-col">
+                    <h3 class="footer-title">Categories</h3>
+                    <ul class="footer-links">
+                        {% get_categories as footer_cats %}
+                        {% for c in footer_cats %}
+                            <li><a href="/?category={{ c.category_slug }}#products">{{ c.category_name }}</a></li>
+                        {% empty %}
+                            <li><a href="/?category=custom-pc-build-parts#products">Custom PC Build Parts</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Col 4: Contact Info -->
+                <div class="footer-col">
+                    <h3 class="footer-title">Contact Support</h3>
+                    <ul class="footer-contact-info">
+                        <li>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                            <span>Tech Park, Sector 62, Noida, NCR, India - 201309</span>
+                        </li>
+                        <li>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                            <span>+91 1800-890-NEXORIG</span>
+                        </li>
+                        <li>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                            <span>support@nexorig.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <p>&copy; 2026 NEXORIG Technologies Pvt. Ltd. All Rights Reserved. &bull; Build Beyond Limits. &bull; nexorig.com</p>
+                <div class="payment-methods">
+                    <span class="payment-badge">UPI</span>
+                    <span class="payment-badge">VISA</span>
+                    <span class="payment-badge">MasterCard</span>
+                    <span class="payment-badge">RuPay</span>
+                    <span class="payment-badge">NetBanking</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="favToast" class="fav-toast">
+        <span id="favToastIcon">❤️</span>
+        <span id="favToastMsg">Added to favorites</span>
+    </div>
+
+    <!-- User Profile & Categories Dropdown Script -->
+    <script>
+        function toggleNavCategoryMenu(e) {
+            if (e) {
+                e.stopPropagation();
+                e.preventDefault();
+            }
+            const catMenu = document.getElementById('navCategoryMenu');
+            if (catMenu) {
+                catMenu.classList.toggle('open');
+            }
+        }
+
+        function toggleUserDropdown(e) {
+            if (e) e.stopPropagation();
+            const dropdown = document.getElementById('userDropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('open');
+            }
+        }
+
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('userDropdown');
+            if (dropdown && !dropdown.contains(e.target)) {
+                dropdown.classList.remove('open');
+            }
+
+            const catDropdown = document.querySelector('.nav-cat-dropdown');
+            const catMenu = document.getElementById('navCategoryMenu');
+            if (catMenu && catDropdown && !catDropdown.contains(e.target)) {
+                catMenu.classList.remove('open');
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const dropdown = document.getElementById('userDropdown');
+                if (dropdown) dropdown.classList.remove('open');
+                const catMenu = document.getElementById('navCategoryMenu');
+                if (catMenu) catMenu.classList.remove('open');
+            }
+        });
+    </script>
+    <!-- AI Assistant Floating Trigger Button -->
+    <button type="button" id="ai-stylist-trigger" class="ai-stylist-btn" onclick="toggleStylist()" aria-label="Toggle AI Assistant" title="Chat with AI Hardware Assistant">
+        <div class="ai-pulse-dot"></div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2 2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
+            <rect x="3" y="8" width="18" height="12" rx="4"></rect>
+            <circle cx="9" cy="14" r="1.5" fill="currentColor"></circle>
+            <circle cx="15" cy="14" r="1.5" fill="currentColor"></circle>
+            <line x1="8" y1="18" x2="16" y2="18"></line>
+        </svg>
+        <span>AI Assistant</span>
+    </button>
+
+    <!-- AI Assistant Chat Drawer -->
+    <div id="ai-stylist-drawer" class="ai-stylist-drawer" style="display: none;">
+        <div class="ai-drawer-inner">
+            <div class="ai-drawer-header">
+                <div class="ai-header-left">
+                    <div class="ai-avatar">🤖</div>
+                    <div>
+                        <div class="ai-header-title">NEXORIG AI Assistant</div>
+                        <div class="ai-header-status"><span class="status-dot"></span> Online &bull; Catalog Search</div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button type="button" onclick="clearAiChat()" title="Reset chat history" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #94a3b8; font-size: 0.75rem; font-weight: 600; padding: 4px 8px; border-radius: 6px; cursor: pointer;">🗑️ Clear</button>
+                    <button type="button" class="ai-close-btn" onclick="toggleStylist()" title="Close chat">&times;</button>
+                </div>
+            </div>
+
+            <div id="chat-messages" class="ai-chat-messages">
+                <div class="mb-3 text-start">
+                    <strong>NEXORIG:</strong>
+                    <div class="mt-1">
+                        👋 Hi! I am your NEXORIG AI Assistant. Ask me anything about PC components, compatibility, GPUs, CPUs, or custom builds!
+                    </div>
+                </div>
+            </div>
+
+            <div class="ai-input-box">
+                <input type="text" id="stylist-input" placeholder="Type a message (e.g. recommend a GPU)..." onkeydown="if(event.key==='Enter') sendStylistMessage()" autocomplete="off">
+                <button type="button" class="ai-send-btn" onclick="sendStylistMessage()" title="Send">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Stylist / Assistant Script -->
+    <script>
+        let aiChatHistory = [];
+        try {
+            aiChatHistory = JSON.parse(sessionStorage.getItem('ai_chat_history') || '[]');
+        } catch (e) {
+            aiChatHistory = [];
+        }
+
+        function toggleStylist() {
+            const drawer = document.getElementById('ai-stylist-drawer');
+            drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function formatAiReply(text) {
+            if (!text) return '';
+
+            let processed = text;
+            // Parse Markdown tables if present
+            if (processed.includes('|')) {
+                const lines = processed.split('\n');
+                let inTable = false;
+                let tableHtml = '<div style="overflow-x:auto; margin:8px 0;"><table class="ai-table" style="width:100%; border-collapse:collapse; font-size:0.82rem;"><tbody>';
+                let newLines = [];
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (line.startsWith('|') && line.endsWith('|')) {
+                        if (/^\|[\s\-:]+(\|[\s\-:]+)+\|$/.test(line)) {
+                            continue; // skip separator row like |:---|:---|
+                        }
+                        if (!inTable) {
+                            inTable = true;
+                            tableHtml = '<div style="overflow-x:auto; margin:8px 0;"><table class="ai-table" style="width:100%; border-collapse:collapse; font-size:0.82rem;"><tbody>';
+                        }
+                        const cells = line.slice(1, -1).split('|').map(c => c.trim());
+                        tableHtml += '<tr>';
+                        cells.forEach(cell => {
+                            tableHtml += `<td style="padding:4px 6px; border:1px solid rgba(255,255,255,0.15);">${cell}</td>`;
+                        });
+                        tableHtml += '</tr>';
+                    } else {
+                        if (inTable) {
+                            tableHtml += '</tbody></table></div>';
+                            newLines.push(tableHtml);
+                            inTable = false;
+                        }
+                        newLines.push(line);
+                    }
+                }
+                if (inTable) {
+                    tableHtml += '</tbody></table></div>';
+                    newLines.push(tableHtml);
+                }
+                processed = newLines.join('\n');
+            }
+
+            return processed
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/^[\*\-]\s+(.*)$/gm, '&bull; $1')
+                .replace(/^###\s+(.*)$/gm, '<h6 style="color:#00d2ff; margin:10px 0 4px 0; font-weight:700;">$1</h6>')
+                .replace(/^##\s+(.*)$/gm, '<h5 style="color:#00e676; margin:12px 0 6px 0; font-weight:800;">$1</h5>')
+                .replace(/\n/g, '<br>');
+        }
+
+        function renderChatHistory() {
+            const chatBox = document.getElementById('chat-messages');
+            if (!chatBox) return;
+
+            let html = `
+                <div class="mb-3 text-start">
+                    <strong>NEXORIG:</strong>
+                    <div class="mt-1">
+                        👋 Hi! I am your NEXORIG AI Assistant. Ask me anything about PC components, compatibility, GPUs, CPUs, or custom builds!
+                    </div>
+                </div>
+            `;
+
+            aiChatHistory.forEach(item => {
+                if (item.role === 'user') {
+                    html += `<div class="mb-2 text-end"><strong>You:</strong> <span class="bg-light p-1 rounded">${item.text}</span></div>`;
+                } else {
+                    html += `<div class="mb-3 text-start"><strong>NEXORIG:</strong><div class="mt-1">${formatAiReply(item.text)}</div></div>`;
+                }
+            });
+
+            chatBox.innerHTML = html;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function clearAiChat() {
+            aiChatHistory = [];
+            sessionStorage.removeItem('ai_chat_history');
+            renderChatHistory();
+        }
+
+        async function sendStylistMessage() {
+            const input = document.getElementById('stylist-input');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            // 1. Save user message to history
+            aiChatHistory.push({ role: 'user', text: msg });
+            sessionStorage.setItem('ai_chat_history', JSON.stringify(aiChatHistory));
+
+            const chatBox = document.getElementById('chat-messages');
+            chatBox.innerHTML += `<div class="mb-2 text-end"><strong>You:</strong> <span class="bg-light p-1 rounded">${msg}</span></div>`;
+            input.value = '';
+
+            chatBox.innerHTML += `<div id="ai-loading" class="text-muted small">Thinking and searching catalog...</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                // Send recent history (excluding the current msg itself) for conversational context
+                const historyContext = aiChatHistory.slice(0, -1).slice(-6);
+
+                const response = await fetch('/api/ai-parts/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ message: msg, history: historyContext })
+                });
+
+                const data = await response.json();
+                document.getElementById('ai-loading')?.remove();
+
+                const replyText = data.reply || data.error || 'Failed to get a response.';
+                
+                // Save assistant reply to history
+                aiChatHistory.push({ role: 'assistant', text: replyText });
+                sessionStorage.setItem('ai_chat_history', JSON.stringify(aiChatHistory));
+
+                chatBox.innerHTML += `<div class="mb-3 text-start"><strong>NEXORIG:</strong><div class="mt-1">${formatAiReply(replyText)}</div></div>`;
+            } catch (err) {
+                document.getElementById('ai-loading')?.remove();
+                chatBox.innerHTML += `<div class="text-danger small">Failed to get a response.</div>`;
+            }
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Render previous chat messages if any exist
+        document.addEventListener('DOMContentLoaded', function() {
+            if (aiChatHistory.length > 0) {
+                renderChatHistory();
+            }
+        });
+    </script>
+</body>
+</html>

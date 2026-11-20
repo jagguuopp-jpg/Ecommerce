@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <rect width="120" height="120" rx="16" fill="#141824"/>
+  <!-- PC Case Tower -->
+  <rect x="34" y="16" width="52" height="88" rx="6" fill="#1e2436" stroke="#00d2ff" stroke-width="2"/>
+  <!-- Glass Window -->
+  <rect x="40" y="24" width="40" height="52" rx="3" fill="#0d111a" stroke="rgba(0, 210, 255, 0.4)" stroke-width="1.5"/>
+  <!-- Internal RGB lighting preview -->
+  <circle cx="50" cy="38" r="6" fill="#ff007f" opacity="0.7"/>
+  <circle cx="68" cy="38" r="6" fill="#00e676" opacity="0.7"/>
+  <rect x="46" y="52" width="28" height="10" rx="2" fill="#00d2ff" opacity="0.6"/>
+  <!-- Front intake / PSU shroud -->
+  <rect x="40" y="80" width="40" height="18" rx="2" fill="#141824" stroke="#334155" stroke-width="1"/>
+  <!-- Power button -->
+  <circle cx="60" cy="20" r="2" fill="#00e676"/>
+  <text x="60" y="115" font-family="'Outfit', sans-serif" font-size="10" font-weight="bold" fill="#00d2ff" text-anchor="middle">CABINET / CASE</text>
+</svg>

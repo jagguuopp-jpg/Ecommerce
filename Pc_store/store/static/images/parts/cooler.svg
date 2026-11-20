@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <rect width="120" height="120" rx="16" fill="#141824"/>
+  <!-- Liquid Cooler / AIO Pump Block -->
+  <circle cx="60" cy="54" r="24" fill="#1e2436" stroke="#00d2ff" stroke-width="2"/>
+  <circle cx="60" cy="54" r="14" fill="#0d111a" stroke="#00e676" stroke-width="2"/>
+  <circle cx="60" cy="54" r="6" fill="#00d2ff"/>
+  <!-- Tubes -->
+  <path d="M42 42 Q28 20 50 16" fill="none" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
+  <path d="M48 40 Q36 28 64 16" fill="none" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
+  <!-- Radiator Block at top -->
+  <rect x="25" y="10" width="70" height="10" rx="2" fill="#334155" stroke="#94a3b8" stroke-width="1"/>
+  <text x="60" y="98" font-family="'Outfit', sans-serif" font-size="11" font-weight="bold" fill="#00d2ff" text-anchor="middle">CPU COOLER</text>
+  <text x="60" y="112" font-family="'Outfit', sans-serif" font-size="9" fill="#00e676" text-anchor="middle">AIO LIQUID / AIR</text>
+</svg>

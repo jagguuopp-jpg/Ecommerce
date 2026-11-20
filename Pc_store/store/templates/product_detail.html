@@ -1,0 +1,234 @@
+{% extends 'layout.html' %}
+{% load static helper %}
+
+{% block title %}
+    {% if product %}
+        {{ product.product_name }} | NEXORIG
+    {% else %}
+        NVIDIA GeForce RTX 4090 24GB OC Edition | NEXORIG
+    {% endif %}
+{% endblock title %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/product_detail.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+<section class="product-detail-section">
+    <div class="container">
+
+        <!-- Breadcrumbs -->
+        <div class="detail-breadcrumbs">
+            <a href="{% url 'home' %}">Home</a>
+            <span>/</span>
+            <a href="{% url 'home' %}#products">Hardware Catalog</a>
+            <span>/</span>
+            <span style="color: var(--primary-blue, #00d2ff);">
+                {% if product.product_category %}
+                    {{ product.product_category.category_name }}
+                {% else %}
+                    Graphics Cards &amp; GPUs
+                {% endif %}
+            </span>
+            <span>/</span>
+            <span style="color: #fff;">{{ product.product_name }}</span>
+        </div>
+
+        <div class="product-detail-layout">
+
+            <!-- Left: Product Image & Gallery Card -->
+            <div class="product-gallery-card">
+                <div class="product-image-container">
+                    <span class="gallery-badge">AUTHENTIC HARDWARE</span>
+                    <button type="button" class="btn-fav" data-fav-id="{{ product.id|default:'1' }}" onclick="toggleFavorite('{{ product.id|default:'1' }}', '{{ product.product_name|escapejs }}')" aria-label="Favorite" title="Add to Favorites">
+                        <svg class="heart-svg" viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                    </button>
+                    {% if product.product_image %}
+                        <img src="{{ product.product_image.url }}" alt="{{ product.product_name }}" class="product-detail-img">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=900&q=80" alt="{{ product.product_name }}" class="product-detail-img">
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Right: Product Information & Purchase Panel -->
+            <div class="product-info-panel">
+                <span class="product-meta-category">
+                    {% if product.product_category %}
+                        {{ product.product_category.category_name }}
+                    {% else %}
+                        DESKTOPS &bull; GRAPHICS CARDS
+                    {% endif %}
+                </span>
+
+                <h1 class="product-main-title">{{ product.product_name}}</h1>
+
+                <div class="product-rating-row">
+                    <div class="rating-stars">★★★★★</div>
+                    <span class="rating-score">4.9 / 5.0</span>
+                    <span class="rating-reviews">(148 Verified Buyer Reviews)</span>
+                </div>
+
+                <!-- Price Box -->
+                <div class="product-price-container">
+                    <div class="current-price-tag">
+                        ₹{{ product.product_price|default:'1,84,990.00' }}
+                        <span class="price-tax-note">(18% GST Included)</span>
+                    </div>
+
+                    <!-- Stock indicator -->
+                    {% if product %}
+                        {% if product.product_quantity_in_stock > 0 %}
+                            <div class="stock-pill stock-in">
+                                <span class="stock-dot"></span>
+                                In Stock: {{ product.product_quantity_in_stock }} units ready to dispatch
+                            </div>
+                        {% else %}
+                            <div class="stock-pill stock-out">
+                                <span class="stock-dot"></span>
+                                Currently Out of Stock
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="stock-pill stock-in">
+                            <span class="stock-dot"></span>
+                            In Stock: 12 units ready to dispatch
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Product Description -->
+                <div class="product-description-preview">
+                    {% if product.product_description %}
+                        {{ product.product_description|linebreaks }}
+                    {% else %}
+                        <p>Powered by the ultra-efficient NVIDIA Ada Lovelace architecture, the GeForce RTX 4090 24GB delivers a generational leap in performance, neural graphics, and AI computing. Featuring 24 GB of ultra-fast GDDR6X memory, DLSS 3.5 Frame Generation, 3rd Gen Ray Tracing Cores, and massive 16,384 CUDA cores, it provides the ultimate experience for gamers, 3D artists, and content creators alike.</p>
+                    {% endif %}
+                </div>
+
+                <!-- CTA Purchase Buttons -->
+                <div class="product-action-box">
+                    <a href="{% url 'buy_now' product.id %}" class="btn-buy-now">
+                        Buy Now
+                    </a>
+                    <a href="{% url 'add_to_cart' product.id %}" class="btn-add-cart">
+                        Add to Cart
+                    </a>
+                    {% is_in_wishlist request.user product as in_fav %}
+                    <a href="{% url 'toggle_wishlist' product.id %}" class="btn-detail-fav {% if in_fav %}active{% endif %}" aria-label="Favorite" title="{% if in_fav %}Remove from Wishlist{% else %}Add to Wishlist{% endif %}">
+                        <svg class="heart-svg" viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                        <span class="fav-text">{% if in_fav %}In Wishlist{% else %}Add to Wishlist{% endif %}</span>
+                    </a>
+                </div>
+
+                <!-- Trust / Assurance Badges -->
+                <div class="assurance-grid">
+                    <div class="assurance-item">
+                        <span class="assurance-icon">🛡️</span>
+                        <span>3-Yr Brand Warranty</span>
+                    </div>
+                    <div class="assurance-item">
+                        <span class="assurance-icon">⚡</span>
+                        <span>Express Air Shipping</span>
+                    </div>
+                    <div class="assurance-item">
+                        <span class="assurance-icon">📄</span>
+                        <span>Official GST Tax Invoice</span>
+                    </div>
+                    <div class="assurance-item">
+                        <span class="assurance-icon">🔄</span>
+                        <span>7-Day Replacement Policy</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Technical Specifications Table -->
+        <div class="specs-panel-card">
+            <h3 class="specs-title">Technical Specifications</h3>
+            <table class="specs-table">
+                <tbody>
+                    <tr>
+                        <th>Product Model</th>
+                        <td>{{ product.product_name|default:'NVIDIA GeForce RTX 4090 24GB' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Hardware Category</th>
+                        <td>
+                            {% if product.product_category %}
+                                {{ product.product_category.category_name }}
+                            {% else %}
+                                Desktop Components / Graphics Cards
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>GPU Architecture</th>
+                        <td>NVIDIA Ada Lovelace (AD102, 4nm TSMC)</td>
+                    </tr>
+                    <tr>
+                        <th>CUDA Cores</th>
+                        <td>16,384 Parallel Processing Cores</td>
+                    </tr>
+                    <tr>
+                        <th>Memory Configuration</th>
+                        <td>24 GB GDDR6X (384-bit memory bus)</td>
+                    </tr>
+                    <tr>
+                        <th>Memory Bandwidth</th>
+                        <td>1,008 GB/s (21 Gbps Effective)</td>
+                    </tr>
+                    <tr>
+                        <th>Display Outputs</th>
+                        <td>3x DisplayPort 1.4a, 2x HDMI 2.1a (Up to 4 Displays)</td>
+                    </tr>
+                    <tr>
+                        <th>Max Digital Resolution</th>
+                        <td>7680 x 4320 @ 60Hz (8K Ultra HD)</td>
+                    </tr>
+                    <tr>
+                        <th>Power Consumption &amp; PSU</th>
+                        <td>450W TDP (Recommended PSU: 850W - 1000W 80+ Gold)</td>
+                    </tr>
+                    <tr>
+                        <th>Power Connector</th>
+                        <td>1x 16-pin 12VHPWR (PCIe 5.0, 4x 8-pin PCIe adapter included)</td>
+                    </tr>
+                    <tr>
+                        <th>Inventory Status</th>
+                        <td>
+                            {% if product %}
+                                {% if product.product_quantity_in_stock > 0 %}
+                                    <span style="color: #00e676; font-weight: 700;">In Stock ({{ product.product_quantity_in_stock }} units available)</span>
+                                {% else %}
+                                    <span style="color: #ff007f; font-weight: 700;">Out of Stock</span>
+                                {% endif %}
+                            {% else %}
+                                <span style="color: #00e676; font-weight: 700;">In Stock (12 units available)</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Date Listed</th>
+                        <td>{{ product.product_created_at|default:'Nov 13, 2026' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Distributor Warranty</th>
+                        <td>3 Years Standard Official Brand Warranty (Pan-India Kaizen / Rashi / Acro Support)</td>
+                    </tr>
+                    <tr>
+                        <th>Package Contents</th>
+                        <td>1x Sealed Retail Hardware Box, 16-pin Adapter, Anti-Sag GPU Holder, Warranty Claim Card</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</section>
+{% endblock content %}

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <rect width="120" height="120" rx="16" fill="#141824"/>
+  <rect x="18" y="18" width="84" height="84" rx="4" fill="#0d1f18" stroke="#00e676" stroke-width="2"/>
+  <!-- CPU Socket -->
+  <rect x="42" y="28" width="36" height="36" rx="2" fill="#1e2436" stroke="#00d2ff" stroke-width="1.5"/>
+  <circle cx="60" cy="46" r="8" fill="#00d2ff" opacity="0.3"/>
+  <!-- RAM Slots -->
+  <rect x="84" y="26" width="4" height="40" fill="#00d2ff"/>
+  <rect x="91" y="26" width="4" height="40" fill="#00d2ff"/>
+  <!-- PCIe Slots -->
+  <rect x="26" y="74" width="56" height="6" rx="1" fill="#ffaa00"/>
+  <rect x="26" y="85" width="40" height="5" rx="1" fill="#94a3b8"/>
+  <text x="60" y="112" font-family="'Outfit', sans-serif" font-size="10" font-weight="bold" fill="#00e676" text-anchor="middle">MOTHERBOARD</text>
+</svg>

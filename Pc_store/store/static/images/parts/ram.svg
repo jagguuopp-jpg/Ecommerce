@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <rect width="120" height="120" rx="16" fill="#141824"/>
+  <!-- RAM Stick -->
+  <rect x="15" y="44" width="90" height="32" rx="4" fill="#1e2436" stroke="#00d2ff" stroke-width="2"/>
+  <!-- RGB Bar on top -->
+  <rect x="18" y="44" width="84" height="6" rx="2" fill="url(#rgbGrad)"/>
+  <defs>
+    <linearGradient id="rgbGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ff0055"/>
+      <stop offset="50%" stop-color="#00d2ff"/>
+      <stop offset="100%" stop-color="#00e676"/>
+    </linearGradient>
+  </defs>
+  <!-- Chips -->
+  <rect x="25" y="55" width="12" height="15" rx="1" fill="#0d111a"/>
+  <rect x="42" y="55" width="12" height="15" rx="1" fill="#0d111a"/>
+  <rect x="66" y="55" width="12" height="15" rx="1" fill="#0d111a"/>
+  <rect x="83" y="55" width="12" height="15" rx="1" fill="#0d111a"/>
+  <!-- Gold Contacts -->
+  <rect x="20" y="76" width="36" height="5" fill="#ffaa00"/>
+  <rect x="64" y="76" width="36" height="5" fill="#ffaa00"/>
+  <text x="60" y="32" font-family="'Outfit', sans-serif" font-size="12" font-weight="bold" fill="#00d2ff" text-anchor="middle">RAM DDR5</text>
+</svg>

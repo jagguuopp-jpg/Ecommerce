@@ -1,0 +1,96 @@
+{% extends 'layout.html' %}
+{% load static helper %}
+
+{% block title %}My Wishlist | NEXORIG{% endblock title %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/wishlist.css' %}?v=4.0">
+{% endblock extra_css %}
+
+{% block content %}
+<section class="favorites-page-section">
+    <div class="favorites-container">
+
+        <!-- Header -->
+        <div class="favorites-header">
+            <div class="favorites-title-wrap">
+                <div class="favorites-icon-badge">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="favorites-title">My Wishlist</h1>
+                </div>
+                <span class="favorites-count-pill">{% get_wishlist_count request.user %} Item{{ favorites.count|pluralize }}</span>
+            </div>
+            <a href="{% url 'home' %}" class="btn btn-outline btn-sm">
+                ← Continue Shopping
+            </a>
+        </div>
+
+        {% if favorites %}
+            <!-- Favorites Grid -->
+            <div class="favorites-grid">
+                {% for item in favorites %}
+                    <div class="fav-card">
+                        <div class="fav-card-media">
+                            <a href="{% url 'product_detail' item.product.product_slug %}">
+                                {% if item.product.product_image %}
+                                    <img src="{{ item.product.product_image.url }}" alt="{{ item.product.product_name }}" class="fav-card-img">
+                                {% else %}
+                                    <img src="{% static 'images/placeholder-hardware.png' %}" alt="{{ item.product.product_name }}" class="fav-card-img" onerror="this.src='https://via.placeholder.com/300x220/141724/00d2ff?text=PC+Hardware';">
+                                {% endif %}
+                            </a>
+
+                            <!-- Remove Button: links directly to toggle_wishlist -->
+                            <a href="{% url 'toggle_wishlist' item.product.id %}" class="fav-remove-btn" title="Remove from Wishlist">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </a>
+                        </div>
+
+                        <div class="fav-card-body">
+                            <span class="fav-card-category">{{ item.product.product_category.category_name|default:"Hardware" }}</span>
+                            <a href="{% url 'product_detail' item.product.product_slug %}" class="fav-card-title">
+                                {{ item.product.product_name }}
+                            </a>
+                            <div class="fav-card-price-row">
+                                <span class="fav-card-price">₹{{ item.product.product_price }}</span>
+                                {% if item.product.product_quantity_in_stock > 0 %}
+                                    <span class="fav-stock-badge">In Stock</span>
+                                {% else %}
+                                    <span class="fav-stock-badge" style="color: #ff5c93; background: rgba(255, 0, 127, 0.12); border-color: rgba(255, 0, 127, 0.3);">Out of Stock</span>
+                                {% endif %}
+                            </div>
+
+                            <a href="{% url 'add_to_cart' item.product.id %}" class="fav-add-cart-btn">
+                                Add to Cart
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Empty State -->
+            <div class="favorites-empty">
+                <div class="favorites-empty-icon">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                </div>
+                <h2 class="favorites-empty-title">Your Wishlist is Empty</h2>
+                <p class="favorites-empty-desc">
+                    Explore top-tier GPUs, CPUs, motherboards, and RGB gaming hardware to save for your dream PC battle station!
+                </p>
+                <a href="{% url 'home' %}" class="btn-explore-shop">
+                    <span>⚡ Explore Components</span>
+                </a>
+            </div>
+        {% endif %}
+
+    </div>
+</section>
+{% endblock content %}
