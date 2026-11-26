@@ -956,6 +956,59 @@ def payment_callback(request):
 client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
 
+def profile(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    if request.method == 'POST':
+        action = request.POST.get('action', '')
+
+        if action == 'update_info':
+            email = request.POST.get('email', '').strip()
+            first_name = request.POST.get('first_name', '').strip()
+            last_name = request.POST.get('last_name', '').strip()
+
+            request.user.email = email
+            request.user.first_name = first_name
+            request.user.last_name = last_name
+            request.user.save()
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('profile')
+
+        elif action == 'change_password':
+            current_password = request.POST.get('current_password', '')
+            new_password = request.POST.get('new_password', '')
+            confirm_password = request.POST.get('confirm_password', '')
+
+            if not request.user.check_password(current_password):
+                messages.error(request, 'Current password is incorrect.')
+            elif len(new_password) < 6:
+                messages.error(request, 'New password must be at least 6 characters.')
+            elif new_password != confirm_password:
+                messages.error(request, 'New passwords do not match.')
+            else:
+                request.user.set_password(new_password)
+                request.user.save()
+                auth_login(request, request.user)
+                messages.success(request, 'Password changed successfully!')
+            return redirect('profile')
+
+    total_orders = Order.objects.filter(user=request.user).count()
+    wishlist_count = Whishlist.objects.filter(user=request.user).count()
+    cart_count = CartItem.objects.filter(user=request.user).count()
+    address_count = Address.objects.filter(user=request.user).count()
+    recent_orders = Order.objects.filter(user=request.user).order_by('-created_at')[:5]
+
+    context = {
+        'total_orders': total_orders,
+        'wishlist_count': wishlist_count,
+        'cart_count': cart_count,
+        'address_count': address_count,
+        'recent_orders': recent_orders,
+    }
+    return render(request, 'profile.html', context)
+
+
 def admin_dashboard(request):
     if not request.user.is_authenticated or not (request.user.is_staff or request.user.is_superuser):
         messages.error(request, 'Access denied. Administrator privileges required.')

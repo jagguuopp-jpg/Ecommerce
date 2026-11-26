@@ -176,6 +176,3 @@ All code in this project follows **simple, readable, and standard Django & Pytho
 
 ## 📄 License
 This project is developed for educational and retail demonstration purposes. All product trademarks, model names, and brand logos belong to their respective manufacturers.
-#   E c c o m m e r c e - w e b s i t e -  
- #   w e b s i t e  
- 

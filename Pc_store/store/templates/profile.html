@@ -1,0 +1,480 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}My Profile | NEXORIG{% endblock title %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/cart.css' %}?v=4.0">
+<style>
+    .profile-page {
+        max-width: 900px;
+        margin: 30px auto 60px auto;
+        padding: 0 16px;
+    }
+    .profile-header-card {
+        background: #141724;
+        border: 1px solid rgba(0, 210, 255, 0.25);
+        border-radius: 20px;
+        padding: 30px;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 28px;
+        box-shadow: 0 0 30px rgba(0, 210, 255, 0.08);
+    }
+    .profile-avatar-large {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #00d2ff, #0055ff);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.4rem;
+        font-weight: 800;
+        color: #ffffff;
+        flex-shrink: 0;
+        box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+    }
+    .profile-header-info {
+        flex: 1;
+    }
+    .profile-username {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #ffffff;
+        margin: 0 0 4px 0;
+    }
+    .profile-email {
+        font-size: 0.92rem;
+        color: #94a3b8;
+        margin: 0 0 8px 0;
+    }
+    .profile-role-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .badge-gamer {
+        background: rgba(0, 230, 118, 0.12);
+        color: #00e676;
+        border: 1px solid rgba(0, 230, 118, 0.3);
+    }
+    .badge-staff-role {
+        background: rgba(0, 210, 255, 0.12);
+        color: #00d2ff;
+        border: 1px solid rgba(0, 210, 255, 0.3);
+    }
+    .badge-admin-role {
+        background: rgba(255, 171, 0, 0.12);
+        color: #ffab00;
+        border: 1px solid rgba(255, 171, 0, 0.3);
+    }
+    .profile-joined {
+        font-size: 0.82rem;
+        color: #64748b;
+        margin-top: 6px;
+    }
+
+    /* Stats Row */
+    .profile-stats-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 28px;
+    }
+    .stat-card {
+        background: #141724;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        padding: 20px 16px;
+        text-align: center;
+        transition: all 0.25s ease;
+    }
+    .stat-card:hover {
+        border-color: rgba(0, 210, 255, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 210, 255, 0.1);
+    }
+    .stat-number {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #00d2ff;
+        margin-bottom: 4px;
+    }
+    .stat-label {
+        font-size: 0.82rem;
+        color: #94a3b8;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    /* Section Cards */
+    .profile-section-card {
+        background: #141724;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 20px;
+    }
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin: 0 0 16px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* Account Info Form */
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+    .info-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .info-label {
+        font-size: 0.78rem;
+        color: #94a3b8;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .info-input {
+        width: 100%;
+        padding: 10px 14px;
+        background: #10121a;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: #ffffff;
+        font-size: 0.92rem;
+        font-family: inherit;
+        outline: none;
+        transition: all 0.2s ease;
+    }
+    .info-input:focus {
+        border-color: #00d2ff;
+        box-shadow: 0 0 10px rgba(0, 210, 255, 0.15);
+    }
+    .info-input:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    /* Password Change */
+    .password-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 14px;
+    }
+
+    /* Save Button */
+    .save-btn {
+        background: linear-gradient(135deg, #00d2ff, #0055ff);
+        color: #ffffff;
+        border: none;
+        padding: 12px 32px;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 15px rgba(0, 210, 255, 0.25);
+        margin-top: 16px;
+    }
+    .save-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 210, 255, 0.4);
+    }
+
+    /* Quick Links Grid */
+    .quick-links-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    .quick-link-card {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 16px;
+        background: #10121a;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        color: #ffffff;
+        text-decoration: none;
+        transition: all 0.25s ease;
+    }
+    .quick-link-card:hover {
+        border-color: #00d2ff;
+        background: rgba(0, 210, 255, 0.04);
+        transform: translateY(-2px);
+    }
+    .quick-link-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        flex-shrink: 0;
+    }
+    .quick-link-name {
+        font-weight: 700;
+        font-size: 0.95rem;
+    }
+    .quick-link-desc {
+        font-size: 0.78rem;
+        color: #94a3b8;
+        margin-top: 2px;
+    }
+
+    /* Recent Orders Mini */
+    .recent-order-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .recent-order-row:last-child {
+        border-bottom: none;
+    }
+    .order-mini-id {
+        font-family: monospace;
+        font-size: 0.82rem;
+        color: #cbd5e1;
+    }
+    .order-mini-amount {
+        font-weight: 700;
+        color: #00e676;
+    }
+    .order-status-pill {
+        padding: 3px 10px;
+        border-radius: 6px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    .status-confirmed { background: rgba(0, 230, 118, 0.12); color: #00e676; }
+    .status-processing { background: rgba(0, 210, 255, 0.12); color: #00d2ff; }
+    .status-shipped { background: rgba(255, 171, 0, 0.12); color: #ffab00; }
+    .status-delivered { background: rgba(0, 230, 118, 0.2); color: #00e676; }
+    .status-cancelled { background: rgba(239, 68, 68, 0.12); color: #ef4444; }
+
+    /* Messages */
+    .profile-alert {
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        font-size: 0.88rem;
+        font-weight: 600;
+    }
+    .alert-success {
+        background: rgba(0, 230, 118, 0.1);
+        border: 1px solid rgba(0, 230, 118, 0.3);
+        color: #00e676;
+    }
+    .alert-danger {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #ef4444;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .profile-header-card {
+            flex-direction: column;
+            text-align: center;
+        }
+        .profile-stats-row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .info-grid,
+        .password-grid {
+            grid-template-columns: 1fr;
+        }
+        .quick-links-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="profile-page">
+
+    <!-- Messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="profile-alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Profile Header -->
+    <div class="profile-header-card">
+        <div class="profile-avatar-large">
+            {{ request.user.username|make_list|first|upper }}
+        </div>
+        <div class="profile-header-info">
+            <h1 class="profile-username">{{ request.user.username }}</h1>
+            <p class="profile-email">{{ request.user.email|default:"No email set" }}</p>
+            <span class="profile-role-badge {% if request.user.is_superuser %}badge-admin-role{% elif request.user.is_staff %}badge-staff-role{% else %}badge-gamer{% endif %}">
+                {% if request.user.is_superuser %}
+                    ⚡ Admin
+                {% elif request.user.is_staff %}
+                    🛡️ Staff
+                {% else %}
+                    🎮 Gamer Member
+                {% endif %}
+            </span>
+            <div class="profile-joined">
+                📅 Member since {{ request.user.date_joined|date:"F Y" }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="profile-stats-row">
+        <div class="stat-card">
+            <div class="stat-number">{{ total_orders }}</div>
+            <div class="stat-label">Total Orders</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ wishlist_count }}</div>
+            <div class="stat-label">Wishlist Items</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ cart_count }}</div>
+            <div class="stat-label">Cart Items</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ address_count }}</div>
+            <div class="stat-label">Saved Addresses</div>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="profile-section-card">
+        <h2 class="section-title">📌 Quick Links</h2>
+        <div class="quick-links-grid">
+            <a href="{% url 'my_orders' %}" class="quick-link-card">
+                <div class="quick-link-icon" style="background: rgba(0, 210, 255, 0.1);">📦</div>
+                <div>
+                    <div class="quick-link-name">My Orders</div>
+                    <div class="quick-link-desc">View order history & track deliveries</div>
+                </div>
+            </a>
+            <a href="{% url 'favourites' %}" class="quick-link-card">
+                <div class="quick-link-icon" style="background: rgba(239, 68, 68, 0.1);">❤️</div>
+                <div>
+                    <div class="quick-link-name">Wishlist</div>
+                    <div class="quick-link-desc">Saved products & favorites</div>
+                </div>
+            </a>
+            <a href="{% url 'addresses' %}" class="quick-link-card">
+                <div class="quick-link-icon" style="background: rgba(0, 230, 118, 0.1);">📍</div>
+                <div>
+                    <div class="quick-link-name">Addresses</div>
+                    <div class="quick-link-desc">Manage shipping addresses</div>
+                </div>
+            </a>
+            <a href="{% url 'cart' %}" class="quick-link-card">
+                <div class="quick-link-icon" style="background: rgba(255, 171, 0, 0.1);">🛒</div>
+                <div>
+                    <div class="quick-link-name">Shopping Cart</div>
+                    <div class="quick-link-desc">{{ cart_count }} item{{ cart_count|pluralize }} in cart</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Account Information (Editable) -->
+    <div class="profile-section-card">
+        <h2 class="section-title">👤 Account Information</h2>
+        <form method="POST" action="{% url 'profile' %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="update_info">
+            <div class="info-grid">
+                <div class="info-field">
+                    <label class="info-label">Username</label>
+                    <input type="text" class="info-input" value="{{ request.user.username }}" disabled>
+                </div>
+                <div class="info-field">
+                    <label class="info-label">Email Address</label>
+                    <input type="email" name="email" class="info-input" value="{{ request.user.email }}" placeholder="your@email.com">
+                </div>
+                <div class="info-field">
+                    <label class="info-label">First Name</label>
+                    <input type="text" name="first_name" class="info-input" value="{{ request.user.first_name }}" placeholder="First name">
+                </div>
+                <div class="info-field">
+                    <label class="info-label">Last Name</label>
+                    <input type="text" name="last_name" class="info-input" value="{{ request.user.last_name }}" placeholder="Last name">
+                </div>
+            </div>
+            <button type="submit" class="save-btn">💾 Save Changes</button>
+        </form>
+    </div>
+
+    <!-- Change Password -->
+    <div class="profile-section-card">
+        <h2 class="section-title">🔒 Change Password</h2>
+        <form method="POST" action="{% url 'profile' %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="change_password">
+            <div class="password-grid">
+                <div class="info-field">
+                    <label class="info-label">Current Password</label>
+                    <input type="password" name="current_password" class="info-input" placeholder="••••••••" required>
+                </div>
+                <div class="info-field">
+                    <label class="info-label">New Password</label>
+                    <input type="password" name="new_password" class="info-input" placeholder="••••••••" required>
+                </div>
+                <div class="info-field">
+                    <label class="info-label">Confirm New Password</label>
+                    <input type="password" name="confirm_password" class="info-input" placeholder="••••••••" required>
+                </div>
+            </div>
+            <button type="submit" class="save-btn" style="background: linear-gradient(135deg, #00e676, #00b0ff);">🔒 Update Password</button>
+        </form>
+    </div>
+
+    <!-- Recent Orders -->
+    {% if recent_orders %}
+    <div class="profile-section-card">
+        <h2 class="section-title">📦 Recent Orders</h2>
+        {% for order in recent_orders %}
+        <div class="recent-order-row">
+            <div>
+                <div class="order-mini-id">{{ order.order_id }}</div>
+                <div style="font-size: 0.78rem; color: #64748b; margin-top: 2px;">{{ order.created_at|date:"d M Y, h:i A" }}</div>
+            </div>
+            <div class="order-mini-amount">₹{{ order.total_amount }}</div>
+            <span class="order-status-pill status-{{ order.status|lower }}">{{ order.status }}</span>
+        </div>
+        {% endfor %}
+        <div style="margin-top: 14px;">
+            <a href="{% url 'my_orders' %}" style="color: #00d2ff; font-size: 0.88rem; font-weight: 700; text-decoration: none;">View All Orders →</a>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock content %}

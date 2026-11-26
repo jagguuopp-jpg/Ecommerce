@@ -9,14 +9,14 @@ from django.contrib.messages import constants as messages
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load local .env file if present
-for env_path in [BASE_DIR / '.env', BASE_DIR.parent / '.env']:
-    if env_path.exists():
-        with open(env_path, 'r', encoding='utf-8') as f:
-            for line in f:
-                line = line.strip()
-                if line and not line.startswith('#') and '=' in line:
-                    k, v = line.split('=', 1)
-                    os.environ.setdefault(k.strip(), v.strip().strip('"\''))
+for _env_path in [BASE_DIR / '.env', BASE_DIR.parent / '.env']:
+    if _env_path.exists():
+        with open(_env_path, 'r', encoding='utf-8') as _f:
+            for _line in _f:
+                _line = _line.strip()
+                if _line and not _line.startswith('#') and '=' in _line:
+                    _k, _v = _line.split('=', 1)
+                    os.environ.setdefault(_k.strip(), _v.strip().strip('"\''))
 
 
 # Quick-start development settings - unsuitable for production
@@ -158,10 +158,17 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'jagguuopp@gmail.com')
+# Paste your 16-character Google App Password below to send live emails:
+# (Google Account -> Security -> 2-Step Verification -> App Passwords)
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 DEFAULT_FROM_EMAIL = 'NEXORIG <jagguuopp@gmail.com>'
 
-RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', 'rzp_test_Txa35OFY80Q073')
-RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET', 'Zk1p5szDjv3qJsSyCMXJQiPP')
+
+
+RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', '')
+RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET', '')
+
+
+
 
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')  

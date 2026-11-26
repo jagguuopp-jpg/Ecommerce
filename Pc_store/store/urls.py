@@ -11,6 +11,7 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('create-account/', register, name='create_account'),
     path('logout/', logout, name='logout'),
+    path('profile/', profile, name='profile'),
     path('favourites/', favourites, name='favourites'),
     path('wishlist/', favourites, name='wishlist'),
     path('toggle-wishlist/<int:product_id>/', toggle_wishlist, name='toggle_wishlist'),
